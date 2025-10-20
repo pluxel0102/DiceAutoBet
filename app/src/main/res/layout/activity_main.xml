@@ -687,6 +687,20 @@
 
             </LinearLayout>
 
+            <!-- Кнопка проверки обновлений -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCheckUpdates"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="🔄 Проверить обновления"
+                android:textSize="14sp"
+                app:icon="@android:drawable/stat_notify_sync"
+                app:iconGravity="textStart" />
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

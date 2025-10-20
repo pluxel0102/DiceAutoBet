@@ -37,7 +37,7 @@ class UpdateManager(private val context: Context) {
         private const val PREFS_NAME = "update_prefs"
         private const val KEY_SKIP_VERSION = "skip_version"
         private const val KEY_LAST_CHECK_TIME = "last_check_time"
-        private const val CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000L // 24 часа
+        private const val CHECK_INTERVAL_MS = 60 * 1000L // 1 минута
     }
 
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)

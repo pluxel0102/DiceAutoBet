@@ -550,6 +550,12 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", "Сброс настроек прокси")
             resetProxySettings()
         }
+        
+        // Кнопка проверки обновлений
+        binding.btnCheckUpdates?.setOnClickListener {
+            Log.d("MainActivity", "Нажата кнопка проверки обновлений")
+            checkForUpdatesManually()
+        }
     }
 
     private fun loadSettings() {
