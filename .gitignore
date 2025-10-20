@@ -19,6 +19,12 @@ local.properties
 *.keystore
 keystore.properties
 
+# APK и AAB файлы (загружаются только в Releases)
+*.apk
+*.aab
+app/release/
+app/debug/
+
 # Файлы логов и отладки
 app/src/main/assets/debug/
 *.log
