@@ -161,7 +161,28 @@ class UpdateManager(private val context: Context) {
                     if (id == downloadId) {
                         Log.d(TAG, "✅ Загрузка завершена, запускаем установку")
                         FileLogger.i(TAG, "✅ Загрузка завершена: $fileName")
-                        installApk(fileName)
+                        
+                        // Проверяем статус загрузки
+                        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                        val query = DownloadManager.Query().setFilterById(downloadId)
+                        val cursor = downloadManager.query(query)
+                        
+                        if (cursor.moveToFirst()) {
+                            val statusIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                            val status = cursor.getInt(statusIndex)
+                            
+                            if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                // Даем системе время на финализацию файла
+                                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                                    installApk(fileName)
+                                }, 500) // Задержка 500мс для финализации
+                            } else {
+                                Log.e(TAG, "❌ Загрузка завершилась с ошибкой: status=$status")
+                                Toast.makeText(context, "❌ Ошибка загрузки обновления", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        cursor.close()
+                        
                         try {
                             context.unregisterReceiver(this)
                         } catch (e: Exception) {
@@ -198,18 +219,30 @@ class UpdateManager(private val context: Context) {
      */
     private fun installApk(fileName: String) {
         try {
-            val file = File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                fileName
-            )
+            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val file = File(downloadsDir, fileName)
+
+            Log.d(TAG, "🔍 Проверяем файл: ${file.absolutePath}")
+            Log.d(TAG, "🔍 Папка Downloads: ${downloadsDir.absolutePath}")
+            Log.d(TAG, "🔍 Папка существует: ${downloadsDir.exists()}")
+            Log.d(TAG, "🔍 Файл существует: ${file.exists()}")
+            
+            if (downloadsDir.exists()) {
+                val files = downloadsDir.listFiles()
+                Log.d(TAG, "🔍 Файлы в Downloads (первые 10):")
+                files?.take(10)?.forEach {
+                    Log.d(TAG, "   - ${it.name} (${it.length()} bytes)")
+                }
+            }
 
             if (!file.exists()) {
                 Log.e(TAG, "❌ Файл обновления не найден: ${file.absolutePath}")
                 FileLogger.e(TAG, "❌ Файл не найден: ${file.absolutePath}")
-                Toast.makeText(context, "❌ Файл обновления не найден", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "❌ Файл обновления не найден. Попробуйте еще раз.", Toast.LENGTH_LONG).show()
                 return
             }
-
+            
+            Log.d(TAG, "✅ Файл найден! Размер: ${file.length()} bytes")
             Log.d(TAG, "📦 Запускаем установку: ${file.absolutePath}")
             FileLogger.i(TAG, "📦 Запуск установки: ${file.name}")
 
