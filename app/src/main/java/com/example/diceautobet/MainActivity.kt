@@ -80,6 +80,18 @@ class MainActivity : AppCompatActivity() {
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted -> if (granted) updatePermissionButtons() }
+    
+    private val storagePermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted -> 
+        if (granted) {
+            Log.d("MainActivity", "✅ Разрешение на хранилище получено")
+            Toast.makeText(this, "✅ Доступ к хранилищу разрешен", Toast.LENGTH_SHORT).show()
+        } else {
+            Log.w("MainActivity", "⚠️ Разрешение на хранилище отклонено")
+            Toast.makeText(this, "⚠️ Для загрузки обновлений требуется доступ к хранилищу", Toast.LENGTH_LONG).show()
+        }
+    }
 
     // ServiceConnection для DualModeService
     private val dualModeServiceConnection = object : ServiceConnection {
@@ -151,7 +163,10 @@ class MainActivity : AppCompatActivity() {
         updatePermissionButtons()
         loadSettings()
         
-        // 🔄 ПРОВЕРКА ОБНОВЛЕНИЙ ПРИ ЗАПУСКЕ
+        // � ЗАПРОС РАЗРЕШЕНИЯ НА ХРАНИЛИЩЕ (для обновлений)
+        checkStoragePermission()
+        
+        // �🔄 ПРОВЕРКА ОБНОВЛЕНИЙ ПРИ ЗАПУСКЕ
         checkForUpdatesOnStartup()
         
         // � ПРОГРЕВ СОЕДИНЕНИЯ ДЛЯ УСКОРЕНИЯ ИГРЫ
@@ -247,6 +262,31 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "Активность для запроса разрешения запущена")
     }
 
+    /**
+     * Проверка и запрос разрешения на доступ к хранилищу
+     */
+    private fun checkStoragePermission() {
+        // Для Android 13+ (API 33+) используем MANAGE_EXTERNAL_STORAGE или обходимся без разрешений
+        // Для Android 10-12 (API 29-32) используем WRITE_EXTERNAL_STORAGE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android 11+ - DownloadManager работает без специальных разрешений
+            Log.d("MainActivity", "✅ Android 11+ - разрешения на хранилище не требуются для DownloadManager")
+            return
+        }
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val permission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            val granted = ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+            
+            if (!granted) {
+                Log.d("MainActivity", "📁 Запрашиваем разрешение на хранилище")
+                storagePermissionLauncher.launch(permission)
+            } else {
+                Log.d("MainActivity", "✅ Разрешение на хранилище уже предоставлено")
+            }
+        }
+    }
+    
     /**
      * Проверка обновлений при запуске приложения
      */
