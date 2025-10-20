@@ -150,6 +150,9 @@ class UpdateManager(private val context: Context) {
                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
                 .setAllowedOverMetered(true)
                 .setAllowedOverRoaming(false)
+                // Добавляем токен для доступа к приватному репозиторию
+                .addRequestHeader("Authorization", "token $GITHUB_TOKEN")
+                .addRequestHeader("Accept", "application/octet-stream")
 
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             downloadId = downloadManager.enqueue(request)
@@ -192,7 +195,12 @@ class UpdateManager(private val context: Context) {
                                             DownloadManager.ERROR_INSUFFICIENT_SPACE -> "Недостаточно места"
                                             DownloadManager.ERROR_TOO_MANY_REDIRECTS -> "Слишком много перенаправлений"
                                             DownloadManager.ERROR_UNHANDLED_HTTP_CODE -> "Файл не найден на сервере (404)"
-                                            else -> "Неизвестная ошибка ($reason)"
+                                            404 -> "Обновление еще не опубликовано на GitHub"
+                                            else -> when {
+                                                reason >= 400 && reason < 500 -> "HTTP ошибка клиента: $reason"
+                                                reason >= 500 && reason < 600 -> "HTTP ошибка сервера: $reason"
+                                                else -> "Неизвестная ошибка ($reason)"
+                                            }
                                         }
                                     }
                                     else -> "Статус загрузки: $status"
