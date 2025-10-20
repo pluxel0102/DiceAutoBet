@@ -816,6 +816,7 @@ class SingleModeController(
 
     /**
      * Проверка, является ли изображение таймером (зеленые или красные цифры)
+     * Улучшенная версия: отличает таймер от кубиков по паттерну распределения
      */
     private fun isTimerImage(bitmap: Bitmap): Boolean {
         try {
@@ -824,7 +825,9 @@ class SingleModeController(
             val centerY = bitmap.height / 2
             val checkRadius = minOf(bitmap.width, bitmap.height) / 4
 
-            var timerPixelCount = 0
+            var greenPixelCount = 0  // Зелёные пиксели (таймер)
+            var redPixelCount = 0    // Красные пиксели (последние 5 сек)
+            var bluePixelCount = 0   // Синие пиксели (кубики!)
             var totalPixelsChecked = 0
 
             // Проверяем область вокруг центра
@@ -839,27 +842,54 @@ class SingleModeController(
                         totalPixelsChecked++
 
                         // Проверяем, является ли пиксель зеленым (обычный таймер)
-                        val isGreenTimer = green > red + 30 && green > blue + 30 && green > 100
+                        val isGreenTimer = green > red + 40 && green > blue + 40 && green > 120
 
-                        // Проверяем, является ли пиксель красным (последние 5 секунд)
-                        val isRedTimer = red > green + 30 && red > blue + 30 && red > 100
+                        // Проверяем, является ли пиксель красным (последние 5 секунд или КУБИК!)
+                        val isRedPixel = red > green + 40 && red > blue + 40 && red > 100
+                        
+                        // Проверяем, является ли пиксель синим (КУБИК!)
+                        val isBluePixel = blue > red + 40 && blue > green + 40 && blue > 100
 
-                        if (isGreenTimer || isRedTimer) {
-                            timerPixelCount++
-                        }
+                        if (isGreenTimer) greenPixelCount++
+                        if (isRedPixel) redPixelCount++
+                        if (isBluePixel) bluePixelCount++
                     }
                 }
             }
 
-            // Если больше 5% пикселей в центральной области зеленые или красные - это таймер
-            val timerPercentage = if (totalPixelsChecked > 0) {
-                (timerPixelCount.toFloat() / totalPixelsChecked) * 100
+            // Вычисляем процент каждого цвета
+            val greenPercentage = if (totalPixelsChecked > 0) {
+                (greenPixelCount.toFloat() / totalPixelsChecked) * 100
+            } else 0f
+            
+            val redPercentage = if (totalPixelsChecked > 0) {
+                (redPixelCount.toFloat() / totalPixelsChecked) * 100
+            } else 0f
+            
+            val bluePercentage = if (totalPixelsChecked > 0) {
+                (bluePixelCount.toFloat() / totalPixelsChecked) * 100
             } else 0f
 
-            val isTimer = timerPercentage > 5.0f
+            // КЛЮЧЕВАЯ ЛОГИКА: 
+            // Если есть синие пиксели (>2%) - это КУБИКИ, не таймер!
+            // Таймер = зелёные/красные цифры БЕЗ синих кубиков
+            val hasBlueDice = bluePercentage > 2.0f
+            val hasGreenTimer = greenPercentage > 3.0f
+            val hasRedTimer = redPercentage > 3.0f
+            
+            val isTimer = (hasGreenTimer || hasRedTimer) && !hasBlueDice
 
-            if (isTimer) {
-                Log.d(TAG, "🟢🔴 Обнаружен таймер: ${timerPercentage.toInt()}% цветных пикселей")
+            if (hasGreenTimer || hasRedTimer || hasBlueDice) {
+                Log.d(TAG, "🎨 Анализ цветов: " +
+                    "Зелёный=${greenPercentage.toInt()}%, " +
+                    "Красный=${redPercentage.toInt()}%, " +
+                    "Синий=${bluePercentage.toInt()}%")
+                
+                if (isTimer) {
+                    Log.d(TAG, "🟢🔴 Обнаружен ТАЙМЕР (зелёные/красные цифры)")
+                } else if (hasBlueDice) {
+                    Log.d(TAG, "🎲 Обнаружены КУБИКИ (синий цвет присутствует)")
+                }
             }
 
             return isTimer
