@@ -287,6 +287,32 @@ class UpdateManager(private val context: Context) {
                 return
             }
             
+            // Проверяем что это действительно APK (начинается с "PK")
+            try {
+                val header = ByteArray(2)
+                file.inputStream().use { it.read(header) }
+                val isPkZip = header[0] == 0x50.toByte() && header[1] == 0x4B.toByte()
+                Log.d(TAG, "🔍 Проверка заголовка файла: ${if (isPkZip) "✅ ZIP/APK" else "❌ НЕ APK"}")
+                
+                if (!isPkZip) {
+                    Log.e(TAG, "❌ Файл не является APK (заголовок: ${header[0].toString(16)}, ${header[1].toString(16)})")
+                    FileLogger.e(TAG, "❌ Неверный формат файла")
+                    
+                    // Читаем первые 100 байт для диагностики
+                    val preview = ByteArray(100)
+                    file.inputStream().use { it.read(preview) }
+                    val previewText = String(preview).take(100)
+                    Log.e(TAG, "Содержимое файла: $previewText")
+                    FileLogger.e(TAG, "Содержимое: $previewText")
+                    
+                    Toast.makeText(context, "❌ Загружен неверный файл. Попробуйте еще раз.", Toast.LENGTH_LONG).show()
+                    file.delete()
+                    return
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Ошибка проверки файла: ${e.message}")
+            }
+            
             Log.d(TAG, "📦 Запускаем установку: ${file.absolutePath}")
             FileLogger.i(TAG, "📦 Запуск установки: ${file.name}")
 
