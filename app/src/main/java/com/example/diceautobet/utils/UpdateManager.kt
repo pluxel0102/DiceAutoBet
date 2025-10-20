@@ -17,6 +17,7 @@ import org.json.JSONObject
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
+import java.security.MessageDigest
 
 data class UpdateInfo(
     val latestVersion: String,
@@ -278,6 +279,23 @@ class UpdateManager(private val context: Context) {
             val fileSize = file.length()
             Log.d(TAG, "✅ Файл найден! Размер: $fileSize bytes (${fileSize / 1024 / 1024} MB)")
             
+            // Вычисляем MD5 хеш для диагностики
+            try {
+                val md5 = MessageDigest.getInstance("MD5")
+                file.inputStream().use { input ->
+                    val buffer = ByteArray(8192)
+                    var bytesRead: Int
+                    while (input.read(buffer).also { bytesRead = it } != -1) {
+                        md5.update(buffer, 0, bytesRead)
+                    }
+                }
+                val md5Hash = md5.digest().joinToString("") { "%02x".format(it) }
+                Log.d(TAG, "🔐 MD5 хеш файла: $md5Hash")
+                FileLogger.i(TAG, "MD5: $md5Hash")
+            } catch (e: Exception) {
+                Log.w(TAG, "⚠️ Не удалось вычислить MD5: ${e.message}")
+            }
+            
             // Проверка на минимальный размер APK (должен быть > 1MB)
             if (fileSize < 1024 * 1024) {
                 Log.e(TAG, "❌ Файл слишком маленький ($fileSize bytes), возможно загружен HTML вместо APK")
@@ -289,32 +307,45 @@ class UpdateManager(private val context: Context) {
             
             // Проверяем что это действительно APK (начинается с "PK")
             try {
-                val header = ByteArray(2)
-                file.inputStream().use { it.read(header) }
-                val isPkZip = header[0] == 0x50.toByte() && header[1] == 0x4B.toByte()
-                Log.d(TAG, "🔍 Проверка заголовка файла: ${if (isPkZip) "✅ ZIP/APK" else "❌ НЕ APK"}")
-                
-                if (!isPkZip) {
-                    Log.e(TAG, "❌ Файл не является APK (заголовок: ${header[0].toString(16)}, ${header[1].toString(16)})")
-                    FileLogger.e(TAG, "❌ Неверный формат файла")
+                file.inputStream().use { stream ->
+                    val header = ByteArray(2)
+                    stream.read(header)
+                    val isPkZip = header[0] == 0x50.toByte() && header[1] == 0x4B.toByte()
+                    Log.d(TAG, "🔍 Проверка заголовка файла: ${if (isPkZip) "✅ ZIP/APK" else "❌ НЕ APK"}")
                     
-                    // Читаем первые 100 байт для диагностики
-                    val preview = ByteArray(100)
-                    file.inputStream().use { it.read(preview) }
-                    val previewText = String(preview).take(100)
-                    Log.e(TAG, "Содержимое файла: $previewText")
-                    FileLogger.e(TAG, "Содержимое: $previewText")
-                    
-                    Toast.makeText(context, "❌ Загружен неверный файл. Попробуйте еще раз.", Toast.LENGTH_LONG).show()
-                    file.delete()
-                    return
+                    if (!isPkZip) {
+                        Log.e(TAG, "❌ Файл не является APK (заголовок: ${header[0].toString(16)}, ${header[1].toString(16)})")
+                        FileLogger.e(TAG, "❌ Неверный формат файла")
+                        
+                        // Читаем первые 100 байт для диагностики
+                        val preview = ByteArray(100)
+                        file.inputStream().use { it.read(preview) }
+                        val previewText = String(preview).take(100)
+                        Log.e(TAG, "Содержимое файла: $previewText")
+                        FileLogger.e(TAG, "Содержимое: $previewText")
+                        
+                        Toast.makeText(context, "❌ Загружен неверный файл. Попробуйте еще раз.", Toast.LENGTH_LONG).show()
+                        file.delete()
+                        return
+                    }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "❌ Ошибка проверки файла: ${e.message}")
+                Log.w(TAG, "⚠️ Не удалось проверить файл (возможно нет разрешения): ${e.message}")
+                Log.w(TAG, "⚠️ Продолжаем установку без проверки...")
+                FileLogger.w(TAG, "Пропуск проверки файла: ${e.message}")
             }
             
             Log.d(TAG, "📦 Запускаем установку: ${file.absolutePath}")
             FileLogger.i(TAG, "📦 Запуск установки: ${file.name}")
+            
+            // Получаем информацию о текущей установленной версии
+            try {
+                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                Log.d(TAG, "📱 Установленная версия: ${packageInfo.versionName} (${packageInfo.versionCode})")
+                FileLogger.i(TAG, "Текущая версия: ${packageInfo.versionName}")
+            } catch (e: Exception) {
+                Log.w(TAG, "⚠️ Не удалось получить info: ${e.message}")
+            }
 
             val intent = Intent(Intent.ACTION_VIEW)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
