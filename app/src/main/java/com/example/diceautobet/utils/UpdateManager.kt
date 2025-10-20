@@ -52,12 +52,15 @@ class UpdateManager(private val context: Context) {
             Log.d(TAG, "🔍 Проверяем обновления...")
             FileLogger.i(TAG, "🔍 Проверка обновлений: $UPDATE_JSON_URL")
             
-            val url = URL(UPDATE_JSON_URL)
+            // Добавляем timestamp для обхода кэша GitHub
+            val urlWithTimestamp = "$UPDATE_JSON_URL?t=${System.currentTimeMillis()}"
+            val url = URL(urlWithTimestamp)
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
             connection.connectTimeout = 10000
             connection.readTimeout = 10000
             connection.setRequestProperty("Cache-Control", "no-cache")
+            connection.setRequestProperty("Pragma", "no-cache")
             // Токен не нужен для update.json в публичном репозитории
 
             if (connection.responseCode == 200) {
@@ -149,9 +152,8 @@ class UpdateManager(private val context: Context) {
                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
                 .setAllowedOverMetered(true)
                 .setAllowedOverRoaming(false)
-                // Добавляем токен для доступа к приватному репозиторию
-                .addRequestHeader("Authorization", "token $GITHUB_TOKEN")
-                .addRequestHeader("Accept", "application/octet-stream")
+                // Для публичного репозитория токен не нужен
+                .addRequestHeader("Accept", "application/vnd.android.package-archive")
 
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             downloadId = downloadManager.enqueue(request)
@@ -272,7 +274,18 @@ class UpdateManager(private val context: Context) {
                 return
             }
             
-            Log.d(TAG, "✅ Файл найден! Размер: ${file.length()} bytes")
+            val fileSize = file.length()
+            Log.d(TAG, "✅ Файл найден! Размер: $fileSize bytes (${fileSize / 1024 / 1024} MB)")
+            
+            // Проверка на минимальный размер APK (должен быть > 1MB)
+            if (fileSize < 1024 * 1024) {
+                Log.e(TAG, "❌ Файл слишком маленький ($fileSize bytes), возможно загружен HTML вместо APK")
+                FileLogger.e(TAG, "❌ Подозрительный размер файла: $fileSize bytes")
+                Toast.makeText(context, "❌ Ошибка загрузки файла. Попробуйте еще раз.", Toast.LENGTH_LONG).show()
+                file.delete() // Удаляем битый файл
+                return
+            }
+            
             Log.d(TAG, "📦 Запускаем установку: ${file.absolutePath}")
             FileLogger.i(TAG, "📦 Запуск установки: ${file.name}")
 
