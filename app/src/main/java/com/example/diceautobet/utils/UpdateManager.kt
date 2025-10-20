@@ -177,8 +177,31 @@ class UpdateManager(private val context: Context) {
                                     installApk(fileName)
                                 }, 500) // Задержка 500мс для финализации
                             } else {
-                                Log.e(TAG, "❌ Загрузка завершилась с ошибкой: status=$status")
-                                Toast.makeText(context, "❌ Ошибка загрузки обновления", Toast.LENGTH_SHORT).show()
+                                // Получаем причину ошибки
+                                val reasonIndex = cursor.getColumnIndex(DownloadManager.COLUMN_REASON)
+                                val reason = if (reasonIndex >= 0) cursor.getInt(reasonIndex) else -1
+                                
+                                val errorMessage = when (status) {
+                                    DownloadManager.STATUS_FAILED -> {
+                                        when (reason) {
+                                            DownloadManager.ERROR_CANNOT_RESUME -> "Загрузка прервана"
+                                            DownloadManager.ERROR_DEVICE_NOT_FOUND -> "Нет доступа к хранилищу"
+                                            DownloadManager.ERROR_FILE_ALREADY_EXISTS -> "Файл уже существует"
+                                            DownloadManager.ERROR_FILE_ERROR -> "Ошибка файла"
+                                            DownloadManager.ERROR_HTTP_DATA_ERROR -> "Ошибка данных HTTP"
+                                            DownloadManager.ERROR_INSUFFICIENT_SPACE -> "Недостаточно места"
+                                            DownloadManager.ERROR_TOO_MANY_REDIRECTS -> "Слишком много перенаправлений"
+                                            DownloadManager.ERROR_UNHANDLED_HTTP_CODE -> "Файл не найден на сервере (404)"
+                                            else -> "Неизвестная ошибка ($reason)"
+                                        }
+                                    }
+                                    else -> "Статус загрузки: $status"
+                                }
+                                
+                                Log.e(TAG, "❌ Загрузка завершилась с ошибкой: status=$status, reason=$reason")
+                                Log.e(TAG, "❌ $errorMessage")
+                                FileLogger.e(TAG, "Ошибка загрузки: $errorMessage")
+                                Toast.makeText(context, "❌ Ошибка загрузки: $errorMessage", Toast.LENGTH_LONG).show()
                             }
                         }
                         cursor.close()
