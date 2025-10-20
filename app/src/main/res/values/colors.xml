@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Основные цвета OLED тёмной темы -->
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#64B5F6</color>
+
+    <color name="accent">#2196F3</color>
+    <color name="accent_dark">#1976D2</color>
+
+    <!-- Цвета фона для OLED -->
+    <color name="background">#000000</color>
+    <color name="background_primary">#000000</color>
+    <color name="surface">#121212</color>
+    <color name="card_background">#1E1E1E</color>
+    <color name="overlay_background">#E6000000</color>
+
+    <!-- Цвета текста для тёмной темы -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="text_hint">#66FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="white_70">#B3FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <!-- Цвета состояний -->
+    <color name="success">#4CAF50</color>
+    <color name="error">#F44336</color>
+    <color name="warning">#FFC107</color>
+    <color name="info">#2196F3</color>
+    <color name="dual_mode_color">#9C27B0</color>
+
+    <!-- Цвета для игры -->
+    <color name="red_dice">#F44336</color>
+    <color name="orange_dice">#FF9800</color>
+    <color name="draw_color">#9E9E9E</color>
+
+    <!-- Функциональные цвета -->
+    <color name="green">#4CAF50</color>
+    <color name="red">#F44336</color>
+    <color name="blue">#2196F3</color>
+    <color name="cyan">#00BCD4</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="orange">#FF9800</color>
+    <color name="purple">#9C27B0</color>
+
+    <!-- Общие -->
+    <color name="transparent">#00000000</color>
+
+    <!-- Цвета для плавающего окна -->
+    <color name="floating_background">#1E1E1E</color>
+    <color name="floating_border">#333333</color>
+    
+    <!-- Цвета для эффектов -->
+    <color name="ripple_color">#332196F3</color>
+    
+    <!-- Цвета для расширенных настроек OLED -->
+    <color name="background_dark">#000000</color>
+    <color name="card_background_dark">#1E1E1E</color>
+    <color name="input_background">#212121</color>
+    <color name="text_background">#121212</color>
+    <color name="border_color">#444444</color>
+    <color name="button_primary">#2196F3</color>
+    <color name="button_secondary">#333333</color>
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#B3FFFFFF</color>
+    <color name="text_hint_dark">#66FFFFFF</color>
+    
+    <!-- Цвета для индикаторов риска -->
+    <color name="risk_low">#4CAF50</color>
+    <color name="risk_medium">#FFC107</color>
+    <color name="risk_high">#F44336</color>
+    
+    <!-- Недостающие цвета для современной темы -->
+    <color name="accent_blue">#2196F3</color>
+    <color name="surface_light">#333333</color>
+    <color name="text_disabled">#666666</color>
+    
+    <!-- Цвета нажатий (pressed states) -->
+    <color name="primary_pressed">#1976D2</color>
+    <color name="button_secondary_pressed">#555555</color>
+    <color name="success_pressed">#388E3C</color>
+    <color name="error_pressed">#D32F2F</color>
+    <color name="warning_pressed">#F57C00</color>
+</resources>

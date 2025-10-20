@@ -1,0 +1,90 @@
+<resources>
+    <string name="app_name">Dice Auto Bet</string>
+    <string name="accessibility_service_description">Сервис для автоматических кликов в игре</string>
+
+    <!-- Главный экран -->
+    <string name="title_main">Автоматизация ставок</string>
+    <string name="permission_overlay">Разрешение на отображение поверх других приложений</string>
+    <string name="permission_accessibility">Разрешение Accessibility Service</string>
+    <string name="permission_notifications">Разрешение на уведомления</string>
+    <string name="permission_screen_capture">Разрешение на захват экрана</string>
+    <string name="grant_permission">Разрешить</string>
+    <string name="reset_permission">Сбросить</string>
+    <string name="start_service">Запустить сервис</string>
+    <string name="stop_service">Остановить сервис</string>
+
+    <!-- Настройки -->
+    <string name="settings_title">Настройки</string>
+    <string name="configure_areas">Настроить области</string>
+    <string name="base_bet">Базовая ставка: %d руб</string>
+    <string name="max_attempts">Максимум попыток: %d</string>
+    <string name="bet_choice">Ставить на: %s</string>
+    <string name="click_delay">Задержка между кликами: %d мс</string>
+    <string name="check_delay">Задержка проверки результата: %d с</string>
+    <string name="bet_sequence_delay">Задержка в последовательности ставок: %d мс</string>
+    <string name="click_stability_delay">Задержка стабилизации кликов: %d мс</string>
+
+    <!-- Плавающее окно -->
+    <string name="start">Старт</string>
+    <string name="stop">Стоп</string>
+    <string name="pause">Пауза</string>
+    <string name="resume">Продолжить</string>
+    <string name="attempt_info" formatted="false">Попытка %1$d/%2$d</string>
+    <string name="current_bet_info">Ставка: %d руб</string>
+    <string name="win">Победа</string>
+    <string name="loss">Проигрыш</string>
+    <string name="draw">Ничья</string>
+
+    <!-- Области -->
+    <string name="select_area">Выберите область: %s</string>
+    <string name="area_selected">Область выбрана</string>
+    <string name="configure_all_areas">Настройте все области перед запуском</string>
+    <string name="save_area">Сохранить</string>
+    <string name="skip_area">Пропустить</string>
+    <string name="cancel_configuration">Отмена</string>
+    <string name="drag_to_move">Перетащить</string>
+
+    <!-- Ошибки -->
+    <string name="error_max_bet">Достигнута максимальная ставка!</string>
+    <string name="error_recognition">Не удалось распознать кубики</string>
+    <string name="error_service">Ошибка сервиса</string>
+
+    <!-- Прокси настройки -->
+    <string name="proxy_title">🌐 Сетевые настройки</string>
+    <string name="proxy_enabled">Использовать прокси</string>
+    <string name="proxy_description">Если отключено, приложение будет использовать VPN или прямое подключение к интернету</string>
+    <string name="proxy_status_enabled">Прокси: включен (%s)</string>
+    <string name="proxy_status_disabled">Прокси: отключен (VPN/прямое подключение)</string>
+    <string name="proxy_status_warming_up">🔥 Прогрев соединения...</string>
+    <string name="proxy_status_warmed_up">✅ Соединение прогрето (готово к игре)</string>
+    <string name="proxy_status_warmup_error">⚠️ Ошибка прогрева соединения</string>
+    
+    <!-- Детальные настройки прокси -->
+    <string name="proxy_type_title">Тип прокси</string>
+    <string name="proxy_type_socks5">SOCKS5</string>
+    <string name="proxy_type_http">HTTP</string>
+    <string name="proxy_host_hint">Хост</string>
+    <string name="proxy_port_hint">Порт</string>
+    <string name="proxy_username_hint">Логин</string>
+    <string name="proxy_password_hint">Пароль</string>
+    <string name="proxy_save">💾 Сохранить</string>
+    <string name="proxy_reset">🔄 Сброс</string>
+    
+    <!-- Сообщения валидации прокси -->
+    <string name="proxy_error_empty_host">Введите адрес хоста</string>
+    <string name="proxy_error_invalid_host">Неверный формат хоста</string>
+    <string name="proxy_error_empty_port">Введите порт</string>
+    <string name="proxy_error_invalid_port">Порт должен быть от 1 до 65535</string>
+    <string name="proxy_error_empty_credentials">Введите логин и пароль</string>
+    <string name="proxy_success_saved">✅ Настройки прокси сохранены</string>
+    <string name="proxy_success_reset">🔄 Настройки сброшены к значениям по умолчанию</string>
+
+    <!-- Уведомления -->
+    <string name="notification_title">Dice Auto Bet</string>
+    <string name="notification_running">Сервис работает</string>
+    <string name="notification_paused">Сервис на паузе</string>
+    <string name="permission_overlay_button">Разрешить наложение</string>
+    <string name="permission_accessibility_button">Включить доступность</string>
+    <string name="permission_notifications_button">Разрешить уведомления</string>
+    <string name="permission_screen_capture_button">Сбросить разрешение на захват экрана</string>
+</resources>

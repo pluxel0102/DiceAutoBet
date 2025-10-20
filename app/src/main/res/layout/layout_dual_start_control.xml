@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#CC000000"
+    android:padding="12dp"
+    android:gravity="center">
+
+    <!-- Заголовок -->
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Настройка окна"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:gravity="center" />
+
+    <!-- Описание текущего окна -->
+    <TextView
+        android:id="@+id/textWindowType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Верхнее окно"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        android:gravity="center" />
+
+    <!-- Инструкция -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="1. Откройте нужные приложения\n2. Настройте разделение экрана\n3. Нажмите СТАРТ"
+        android:textColor="@android:color/white"
+        android:textSize="10sp"
+        android:gravity="center"
+        android:lineSpacingExtra="2dp" />
+
+    <!-- Кнопка СТАРТ -->
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:text="🚀 СТАРТ"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:background="@android:color/holo_green_light"
+        android:textColor="@android:color/white" />
+
+    <!-- Кнопка отмены -->
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="120dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="6dp"
+        android:text="❌ Отмена"
+        android:textSize="12sp"
+        android:background="@android:color/holo_red_light"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>

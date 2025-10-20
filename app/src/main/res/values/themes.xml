@@ -1,0 +1,139 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme - Modern OLED Dark Theme -->
+    <style name="Theme.DiceAutoBet" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/accent_dark</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Status bar color -->
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+
+        <!-- Surface colors for OLED -->
+        <item name="android:windowBackground">@color/background</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/card_background</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+
+        <!-- Material styles -->
+        <item name="materialCardViewStyle">@style/Widget.App.CardView</item>
+        <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="sliderStyle">@style/Widget.App.Slider</item>
+    </style>
+
+    <!-- Стиль для карточек OLED -->
+    <style name="Widget.App.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="strokeColor">@color/border_color</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- Стиль для кнопок OLED -->
+    <style name="Widget.App.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:padding">12dp</item>
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="rippleColor">@color/ripple_color</item>
+    </style>
+
+    <!-- Стиль для outline кнопок OLED -->
+    <style name="Widget.App.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="strokeColor">@color/primary</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="rippleColor">@color/ripple_color</item>
+    </style>
+
+    <!-- Стиль для danger outline кнопки OLED -->
+    <style name="Widget.App.Button.Outlined.Danger" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="strokeColor">@color/error</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textColor">@color/error</item>
+        <item name="rippleColor">@color/ripple_color</item>
+    </style>
+
+    <!-- Современный стиль для ползунков (Slider) -->
+    <style name="Widget.App.Slider" parent="Widget.Material3.Slider">
+        <item name="thumbColor">@color/primary</item>
+        <item name="trackColorActive">@color/primary</item>
+        <item name="trackColorInactive">@color/border_color</item>
+        <item name="haloColor">@color/ripple_color</item>
+        <item name="thumbRadius">8dp</item>
+        <item name="trackHeight">4dp</item>
+        <item name="thumbElevation">0dp</item>
+        <item name="android:layout_marginHorizontal">8dp</item>
+    </style>
+
+    <!-- Стиль для плавающего окна -->
+    <style name="FloatingWindowTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!-- Прозрачная тема для настройки областей -->
+    <style name="Theme.Translucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+    </style>
+
+    <!-- Основная тема приложения OLED -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/accent_dark</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+    </style>
+
+    <!-- Стили для AppBar OLED -->
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:background">@color/surface</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.Material3.Dark">
+        <item name="android:colorBackground">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+    </style>
+
+    <!-- Современный стиль для SeekBar -->
+    <style name="ModernSeekBarStyle" parent="Widget.AppCompat.SeekBar">
+        <item name="android:progressDrawable">@drawable/seekbar_track</item>
+        <item name="android:thumb">@drawable/seekbar_thumb</item>
+        <item name="android:thumbOffset">0dp</item>
+        <item name="android:splitTrack">false</item>
+        <item name="android:progressTint">@color/accent_blue</item>
+        <item name="android:progressBackgroundTint">@color/surface_light</item>
+        <item name="android:thumbTint">@color/accent_blue</item>
+        <item name="android:layout_marginHorizontal">8dp</item>
+    </style>
+</resources>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Стратегия -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Стратегия двойного режима"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/spinnerStrategy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:text="При выигрыше → другое окно" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Базовая ставка -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Базовая ставка"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="При выигрыше возвращаемся к базовой ставке, при проигрыше удваиваем"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/rgBaseBet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/rbBet10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10 рублей" />
+
+            <RadioButton
+                android:id="@+id/rbBet20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20 рублей (10 + х2)"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/rbBet50"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50 рублей" />
+
+            <RadioButton
+                android:id="@+id/rbBet100"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100 рублей" />
+
+            <RadioButton
+                android:id="@+id/rbBet500"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="500 рублей" />
+
+            <RadioButton
+                android:id="@+id/rbBet2500"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2500 рублей" />
+
+        </RadioGroup>
+
+        <!-- Тип разделения экрана -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Тип разделения экрана"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/spinnerSplitType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:text="Горизонтальное (левое/правое)" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Смена цвета после проигрышей -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Смена цвета после проигрышей подряд"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etColorSwitchLosses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="2"
+                android:inputType="number" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Задержка между действиями -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Задержка между действиями (мс)"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etTimingDelay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="1000"
+                android:inputType="number" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Дополнительные опции -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Дополнительные опции"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cbEnableLogging"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Включить подробное логирование"
+            android:checked="true"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cbAutoCalibration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Автоматическая калибровка областей"
+            android:checked="true"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Информация -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="#FFF3E0"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ℹ️"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Новый режим: настройка областей происходит через полноэкранный оверлей с выделением левой/правой зоны. Не требует ручного деления экрана!"
+                    android:textSize="12sp"
+                    android:textColor="#E65100" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Кнопка перехода к настройке областей для двойного режима -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenAreaConfig"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Настроить области окон"
+            android:textAllCaps="false"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+    </LinearLayout>
+
+</ScrollView>

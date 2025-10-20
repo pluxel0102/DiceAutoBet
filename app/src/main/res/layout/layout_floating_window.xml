@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/floating_window_background"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="240dp"
+        android:layout_height="268dp"
+        android:orientation="vertical">
+
+        <!-- Заголовок с кнопкой закрытия -->
+        <LinearLayout
+            android:id="@+id/headerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/title_gradient_background"
+                android:elevation="2dp"
+                android:gravity="center"
+                android:text="Dice Auto Bet"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- Переключатель режимов -->
+            <androidx.appcompat.widget.AppCompatToggleButton
+                android:id="@+id/btnModeToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/button_toggle_mode_selector"
+                android:textOff="Dual"
+                android:textOn="Single"
+                android:textColor="#FFFFFF"
+                android:textSize="9sp"
+                android:minWidth="40dp"
+                android:gravity="center"
+                android:paddingHorizontal="4dp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/btnMinimize"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/button_minimize_background"
+                android:contentDescription="Свернуть"
+                android:src="@drawable/ic_minimize"
+                android:tint="@color/text_secondary" />
+
+        </LinearLayout>
+
+        <!-- Баланс и статистика -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvBalance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Баланс: 0 ₽"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvProfit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Прибыль: 0 ₽"
+                android:textColor="@color/success"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- Прогресс и риск -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvWinRate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Процент побед: 0%"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tvRiskLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🟢 Низкий"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- Информация о состоянии -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/card_background"
+            android:orientation="vertical"
+            android:padding="6dp">
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:text="Статус: Готов"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvAttempt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:text="@string/attempt_info"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tvCurrentBet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/current_bet_info"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+
+            <!-- Дополнительная статистика -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvStreak"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Серия: 0"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tvMartingaleStep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Шаг: 0/10"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="10sp" />
+
+            </LinearLayout>
+
+            <!-- Предупреждения -->
+            <TextView
+                android:id="@+id/tvWarnings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text=""
+                android:textColor="@color/warning"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- История последних результатов -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:text="История:"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp">
+
+            <LinearLayout
+                android:id="@+id/historyContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+
+        </HorizontalScrollView>
+
+        <!-- Кнопки управления -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnStartStop"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="3dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_start_selector"
+                android:elevation="2dp"
+                android:text="Старт"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnPause"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="3dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_pause_selector"
+                android:elevation="2dp"
+                android:enabled="false"
+                android:text="Пауза"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Кнопка тестирования удвоения -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestDouble"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:text="Тест x2"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="11sp"
+            app:strokeColor="@color/primary" />
+
+        <!-- Кнопка тестирования логики выигрыша -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestWin"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:text="Тест выигрыша"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="11sp"
+            app:strokeColor="@color/primary" />
+
+        <!-- Кнопка тестирования обнаружения результата -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestResult"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:text="Тест динамич"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="11sp"
+            app:strokeColor="@color/primary" />
+
+        <!-- Кнопка тестирования обнаружения нового броска -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestNewRoll"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:text="Тест нового броска"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="11sp"
+            app:strokeColor="@color/primary" />
+
+        <!-- Кнопка тестирования сравнения результатов -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestResultComparison"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:text="Тест сравнения"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="11sp"
+            app:strokeColor="@color/primary" />
+
+        <!-- Кнопка тестирования только кнопки удвоения -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestDoubleOnly"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:text="Тест кнопки x2"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="11sp"
+            app:strokeColor="@color/primary" />
+
+        <!-- Кнопка тестирования разблокировки кнопок -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestButtonUnlock"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:text="Тест разблокировки"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="11sp"
+            app:strokeColor="@color/primary" />
+
+        <!-- Кнопка тестирования правильного удвоения -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestImprovedDouble"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:text="Тест правильного x2"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="11sp"
+            app:strokeColor="@color/primary" />
+
+        <!-- Кнопка тестирования логики удвоения -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestDoublingLogic"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:text="Тест логики x2"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="11sp"
+            app:strokeColor="@color/primary" />
+
+        <!-- Кнопка тестирования установки ставки -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTestBetSetup"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            android:text="Тест ставки"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="11sp"
+            app:strokeColor="@color/primary" />
+
+    </LinearLayout>
+
+</LinearLayout>

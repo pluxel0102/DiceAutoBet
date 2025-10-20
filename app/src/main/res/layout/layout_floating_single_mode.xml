@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/card_background">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:minWidth="200dp">
+
+        <!-- Заголовок -->
+        <TextView
+            android:id="@+id/textTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Одиночный режим"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Статус игры -->
+        <TextView
+            android:id="@+id/textStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Готов к запуску"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Информация о текущей ставке -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ставка: "
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/textCurrentBet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" | "
+                android:textColor="@color/text_hint"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/textCurrentColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Синий"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Кнопки управления -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
+
+            <!-- Кнопка запуска/остановки -->
+            <Button
+                android:id="@+id/btnStartStop"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:text="▶"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:background="@drawable/button_start_background" />
+
+            <!-- Кнопка паузы -->
+            <Button
+                android:id="@+id/btnPause"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:text="⏸"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:background="@drawable/button_stop_background" />
+
+            <!-- Кнопка скрытия -->
+            <Button
+                android:id="@+id/btnHide"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:text="✕"
+                android:textSize="14sp"
+                android:textColor="@color/text_secondary"
+                android:background="@drawable/button_hide_background" />
+
+        </LinearLayout>
+
+        <!-- Кнопка отправки логов -->
+        <Button
+            android:id="@+id/btnSendLogs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="📤 Отправить логи"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:background="@drawable/button_primary_background"
+            android:padding="8dp" />
+
+        <!-- Статистика (компактная) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Побед:"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/textWins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/text_primary"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" | Поражений:"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:layout_marginStart="8dp" />
+
+            <TextView
+                android:id="@+id/textLosses"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/text_primary"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Индикатор перетаскивания -->
+        <View
+            android:layout_width="30dp"
+            android:layout_height="3dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:background="@color/text_hint"
+            android:alpha="0.5" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

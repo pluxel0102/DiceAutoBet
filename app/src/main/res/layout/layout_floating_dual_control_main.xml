@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/card_background">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:minWidth="200dp">
+
+        <!-- Заголовок -->
+        <TextView
+            android:id="@+id/textTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Двойной режим"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Статус -->
+        <TextView
+            android:id="@+id/textStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Готов к запуску"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Кнопки управления -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
+
+            <!-- Кнопка запуска -->
+            <Button
+                android:id="@+id/btnStart"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:text="▶"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:background="@drawable/button_start_background" />
+
+            <!-- Кнопка остановки -->
+            <Button
+                android:id="@+id/btnStop"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="⏸"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:background="@drawable/button_stop_background" />
+
+            <!-- Кнопка скрытия -->
+            <Button
+                android:id="@+id/btnHide"
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:text="✕"
+                android:textSize="14sp"
+                android:textColor="@color/text_secondary"
+                android:background="@drawable/button_hide_background" />
+
+        </LinearLayout>
+
+        <!-- Кнопка логов (отладка) -->
+        <Button
+            android:id="@+id/btnLogs"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="8dp"
+            android:text="📋 Логи"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:background="@drawable/button_logs_background"
+            android:alpha="0.8" />
+
+        <!-- Индикатор перетаскивания -->
+        <View
+            android:layout_width="30dp"
+            android:layout_height="3dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:background="@color/text_hint"
+            android:alpha="0.5" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
