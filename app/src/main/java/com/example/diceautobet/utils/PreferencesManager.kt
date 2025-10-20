@@ -1074,9 +1074,9 @@ class PreferencesManager(private val context: Context) {
     }
     
     enum class OpenRouterModel(val modelId: String, val displayName: String) {
-        CLAUDE_45("anthropic/claude-3.5-sonnet", "Claude 4.5"),
-        CHATGPT_5("openai/gpt-4o", "ChatGPT 5"),
-        GEMINI_25_FLASH_LITE("google/gemini-2.0-flash-exp:free", "Gemini 2.5 Flash-Lite")
+        CLAUDE_45("anthropic/claude-sonnet-4.5", "Claude 4.5"),
+        CHATGPT_5("openai/gpt-5-chat", "ChatGPT 5"),
+        GEMINI_25_FLASH_LITE("google/gemini-2.5-flash-preview-09-2025", "Gemini 2.5 Flash-Lite")
     }
     
     // ==================== НАСТРОЙКИ ПРОКСИ ====================

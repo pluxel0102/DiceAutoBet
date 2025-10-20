@@ -58,8 +58,7 @@ class UpdateManager(private val context: Context) {
             connection.connectTimeout = 10000
             connection.readTimeout = 10000
             connection.setRequestProperty("Cache-Control", "no-cache")
-            // Добавляем токен для доступа к приватному репозиторию
-            connection.setRequestProperty("Authorization", "token $GITHUB_TOKEN")
+            // Токен не нужен для update.json в публичном репозитории
 
             if (connection.responseCode == 200) {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
