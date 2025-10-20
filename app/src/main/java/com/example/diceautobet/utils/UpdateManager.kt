@@ -180,7 +180,7 @@ class UpdateManager(private val context: Context) {
                             if (status == DownloadManager.STATUS_SUCCESSFUL) {
                                 // Даем системе время на финализацию файла
                                 android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                                    installApk(fileName)
+                                    installApk(fileName, id)
                                 }, 500) // Задержка 500мс для финализации
                             } else {
                                 // Получаем причину ошибки
@@ -251,7 +251,7 @@ class UpdateManager(private val context: Context) {
     /**
      * Установить APK
      */
-    private fun installApk(fileName: String) {
+    private fun installApk(fileName: String, dlId: Long) {
         try {
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val file = File(downloadsDir, fileName)
@@ -350,13 +350,20 @@ class UpdateManager(private val context: Context) {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
+            // Для файлов из Downloads используем content:// URI через DownloadManager
             val apkUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                FileProvider.getUriForFile(
-                    context,
-                    "${context.packageName}.fileprovider",
-                    file
-                )
+                // Получаем content:// URI от DownloadManager
+                val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                downloadManager.getUriForDownloadedFile(dlId) ?: run {
+                    // Если не удалось получить URI от DownloadManager, используем FileProvider
+                    Log.w(TAG, "⚠️ Не удалось получить URI от DownloadManager, используем FileProvider")
+                    FileProvider.getUriForFile(
+                        context,
+                        "${context.packageName}.fileprovider",
+                        file
+                    )
+                }
             } else {
                 Uri.fromFile(file)
             }
