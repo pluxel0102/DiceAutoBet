@@ -152,8 +152,9 @@ class UpdateManager(private val context: Context) {
                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
                 .setAllowedOverMetered(true)
                 .setAllowedOverRoaming(false)
-                // Для публичного репозитория токен не нужен
-                .addRequestHeader("Accept", "application/vnd.android.package-archive")
+                // Для публичного репозитория используем правильный Accept заголовок
+                .addRequestHeader("Accept", "application/octet-stream")
+                .addRequestHeader("User-Agent", "DiceAutoBet-UpdateManager")
 
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             downloadId = downloadManager.enqueue(request)
