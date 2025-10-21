@@ -136,4 +136,12 @@
         <item name="android:thumbTint">@color/accent_blue</item>
         <item name="android:layout_marginHorizontal">8dp</item>
     </style>
+
+    <!-- Стиль для тёмного диалога -->
+    <style name="DialogDark" parent="Theme.Material3.DayNight.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+    </style>
 </resources>

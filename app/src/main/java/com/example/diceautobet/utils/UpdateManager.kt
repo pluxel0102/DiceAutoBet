@@ -11,6 +11,7 @@ import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import com.example.diceautobet.DownloadProgressDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -44,6 +45,7 @@ class UpdateManager(private val context: Context) {
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private var downloadId: Long = -1
     private var downloadReceiver: BroadcastReceiver? = null
+    private var progressDialog: DownloadProgressDialog? = null
 
     /**
      * Проверить наличие обновлений
@@ -149,7 +151,7 @@ class UpdateManager(private val context: Context) {
             val request = DownloadManager.Request(Uri.parse(updateInfo.downloadUrl))
                 .setTitle("Обновление DiceAutoBet")
                 .setDescription("Загрузка версии ${updateInfo.latestVersion}")
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
                 .setAllowedOverMetered(true)
                 .setAllowedOverRoaming(false)
@@ -159,6 +161,21 @@ class UpdateManager(private val context: Context) {
 
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             downloadId = downloadManager.enqueue(request)
+            
+            // Показываем красивый диалог прогресса
+            progressDialog = DownloadProgressDialog(
+                context,
+                downloadManager,
+                downloadId,
+                updateInfo.latestVersion
+            ).apply {
+                onCancelled = {
+                    Log.d(TAG, "❌ Загрузка отменена пользователем")
+                    FileLogger.i(TAG, "❌ Пользователь отменил загрузку")
+                    unregisterReceiver()
+                }
+                show()
+            }
 
             // Регистрируем receiver для автоматической установки
             downloadReceiver = object : BroadcastReceiver() {
@@ -178,11 +195,19 @@ class UpdateManager(private val context: Context) {
                             val status = cursor.getInt(statusIndex)
                             
                             if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                // Закрываем диалог прогресса
+                                progressDialog?.dismiss()
+                                progressDialog = null
+                                
                                 // Даем системе время на финализацию файла
                                 android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                                     installApk(fileName, id)
                                 }, 500) // Задержка 500мс для финализации
                             } else {
+                                // Закрываем диалог прогресса при ошибке
+                                progressDialog?.dismiss()
+                                progressDialog = null
+                                
                                 // Получаем причину ошибки
                                 val reasonIndex = cursor.getColumnIndex(DownloadManager.COLUMN_REASON)
                                 val reason = if (reasonIndex >= 0) cursor.getInt(reasonIndex) else -1
@@ -238,8 +263,6 @@ class UpdateManager(private val context: Context) {
                     IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
                 )
             }
-
-            Toast.makeText(context, "📥 Загрузка обновления...", Toast.LENGTH_SHORT).show()
 
         } catch (e: Exception) {
             Log.e(TAG, "❌ Ошибка загрузки обновления", e)
@@ -415,5 +438,19 @@ class UpdateManager(private val context: Context) {
     fun clearUpdateData() {
         prefs.edit().clear().apply()
         Log.d(TAG, "🗑️ Данные обновлений очищены")
+    }
+    
+    /**
+     * Отменить регистрацию receiver загрузки
+     */
+    private fun unregisterReceiver() {
+        try {
+            downloadReceiver?.let {
+                context.unregisterReceiver(it)
+                downloadReceiver = null
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Receiver уже отменён: ${e.message}")
+        }
     }
 }
