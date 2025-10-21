@@ -23,6 +23,15 @@ android {
         dataBinding = true
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("diceautobet-release.keystore")
+            storePassword = "android123"
+            keyAlias = "diceautobet"
+            keyPassword = "android123"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -30,6 +39,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
