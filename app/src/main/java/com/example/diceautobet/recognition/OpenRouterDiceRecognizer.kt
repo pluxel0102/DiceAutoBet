@@ -449,4 +449,74 @@ class OpenRouterDiceRecognizer(private val apiKey: String) {
             Log.w(TAG, "⚠️ Ошибка сохранения в кэш: ${e.message}")
         }
     }
+    
+    /**
+     * Тестирует подключение к OpenRouter API
+     * @param model модель для тестирования
+     * @return Pair<Boolean, String> - успех и сообщение
+     */
+    suspend fun testApiConnection(model: Model): Pair<Boolean, String> {
+        return withContext(Dispatchers.IO) {
+            try {
+                Log.d(TAG, "🧪 Тестирование OpenRouter API (модель: ${model.displayName})...")
+                
+                // Простой тестовый запрос без изображения
+                val testRequestJson = JSONObject().apply {
+                    put("model", model.modelId)
+                    put("max_tokens", 10)
+                    put("messages", JSONArray().apply {
+                        put(JSONObject().apply {
+                            put("role", "user")
+                            put("content", "Say 'OK' if you can read this.")
+                        })
+                    })
+                }
+                
+                val client = ProxyManager.getHttpClient()
+                val mediaType = "application/json; charset=utf-8".toMediaType()
+                val requestBody = testRequestJson.toString().toRequestBody(mediaType)
+                
+                val request = Request.Builder()
+                    .url(OPENROUTER_API_URL)
+                    .post(requestBody)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Authorization", "Bearer $apiKey")
+                    .addHeader("HTTP-Referer", "https://diceautobet.app")
+                    .addHeader("X-Title", "Dice Auto Bet")
+                    .build()
+                
+                client.newCall(request).execute().use { response ->
+                    val responseCode = response.code
+                    
+                    when {
+                        response.isSuccessful -> {
+                            val responseBody = response.body?.string() ?: ""
+                            Log.d(TAG, "✅ Тест API успешен! Код: $responseCode")
+                            Pair(true, "✅ Подключение успешно! Модель ${model.displayName} доступна.")
+                        }
+                        responseCode == 401 -> {
+                            Log.e(TAG, "❌ Неверный API ключ! Код: $responseCode")
+                            Pair(false, "❌ Ошибка авторизации! Проверьте API ключ.")
+                        }
+                        responseCode == 429 -> {
+                            Log.e(TAG, "💸 Квота превышена! Код: $responseCode")
+                            Pair(false, "💸 Превышена квота OpenRouter! Пополните баланс на https://openrouter.ai/")
+                        }
+                        responseCode == 404 -> {
+                            Log.e(TAG, "❌ Модель не найдена! Код: $responseCode")
+                            Pair(false, "❌ Модель ${model.displayName} не найдена!")
+                        }
+                        else -> {
+                            val errorBody = response.body?.string() ?: "Unknown error"
+                            Log.e(TAG, "❌ Ошибка API! Код: $responseCode, Детали: $errorBody")
+                            Pair(false, "❌ Ошибка API (код $responseCode): ${response.message}")
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Ошибка тестирования API: ${e.message}", e)
+                Pair(false, "❌ Ошибка подключения: ${e.message}")
+            }
+        }
+    }
 }

@@ -1475,9 +1475,9 @@ class MainActivity : AppCompatActivity() {
         
         // Настройка выпадающего списка моделей OpenRouter
         val models = arrayOf(
-            "Claude 4.5 (точный)",
-            "ChatGPT 5 (проверенный)",
-            "Gemini 2.5 Flash-Lite (бесплатно)"
+            "Claude 4.5",
+            "ChatGPT 5",
+            "Gemini 2.5 Flash-Lite"
         )
         val modelAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, models)
         spinnerOpenRouterModel.setAdapter(modelAdapter)
@@ -1527,10 +1527,34 @@ class MainActivity : AppCompatActivity() {
         // Обработчик кнопки тестирования
         btnTestOpenRouter.setOnClickListener {
             val apiKey = etOpenRouterApiKey.text?.toString() ?: ""
-            if (apiKey.startsWith("sk-or-")) {
-                android.widget.Toast.makeText(this, "Тестирование OpenRouter API ключа... (функция в разработке)", android.widget.Toast.LENGTH_SHORT).show()
-            } else {
-                android.widget.Toast.makeText(this, "Некорректный API ключ OpenRouter", android.widget.Toast.LENGTH_SHORT).show()
+            if (!apiKey.startsWith("sk-or-") || apiKey.length < 20) {
+                android.widget.Toast.makeText(this, "❌ Некорректный API ключ OpenRouter", android.widget.Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            
+            // Отключаем кнопку во время теста
+            btnTestOpenRouter.isEnabled = false
+            btnTestOpenRouter.text = "Тестирование..."
+            
+            // Получаем выбранную модель
+            val selectedModel = when (spinnerOpenRouterModel.text.toString()) {
+                models[0] -> com.example.diceautobet.recognition.OpenRouterDiceRecognizer.Model.CLAUDE_45
+                models[1] -> com.example.diceautobet.recognition.OpenRouterDiceRecognizer.Model.CHATGPT_5
+                else -> com.example.diceautobet.recognition.OpenRouterDiceRecognizer.Model.GEMINI_25_FLASH_LITE
+            }
+            
+            // Запускаем тест в корутине
+            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                val recognizer = com.example.diceautobet.recognition.OpenRouterDiceRecognizer(apiKey)
+                val (success, message) = recognizer.testApiConnection(selectedModel)
+                
+                // Восстанавливаем кнопку
+                btnTestOpenRouter.isEnabled = true
+                btnTestOpenRouter.text = "Тест API"
+                
+                // Показываем результат
+                android.widget.Toast.makeText(this@MainActivity, message, android.widget.Toast.LENGTH_LONG).show()
+                Log.d("MainActivity", "🧪 Результат теста API: success=$success, message=$message")
             }
         }
         
