@@ -76,6 +76,32 @@ class SingleModeSettingsActivity : AppCompatActivity() {
             setAdapter(betAdapter)
             setText(currentSettings.baseBet.toString(), false)
         }
+        
+        // Настройка спиннера итоговой суммы ставки "Не выпадет дубль"
+        val noDoubleBetAmounts = listOf(10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000)
+        val noDoubleBetAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            noDoubleBetAmounts.map { formatAmount(it) }
+        )
+        
+        (binding.spinnerNoDoubleBetAmount as? AutoCompleteTextView)?.apply {
+            setAdapter(noDoubleBetAdapter)
+            setText(formatAmount(currentSettings.noDoubleBetAmount), false)
+        }
+        
+        // Настройка спиннера номинала кнопки для ставки "Не выпадет дубль"
+        val noDoubleBetNominals = listOf(10, 50, 100, 500, 1000, 2000, 5000, 10000, 20000)
+        val noDoubleBetNominalAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            noDoubleBetNominals.map { it.toString() }
+        )
+        
+        (binding.spinnerNoDoubleBetNominal as? AutoCompleteTextView)?.apply {
+            setAdapter(noDoubleBetNominalAdapter)
+            setText(currentSettings.noDoubleBetNominal.toString(), false)
+        }
     }
     
     /**
@@ -113,6 +139,36 @@ class SingleModeSettingsActivity : AppCompatActivity() {
             binding.etColorSwitchLosses.isEnabled = isChecked
             updateStrategyDescription()
             Log.d(TAG, "Смена цвета: $isChecked")
+        }
+        
+        // Переключатель ставки "Не выпадет дубль"
+        binding.switchNoDoubleBet.setOnCheckedChangeListener { _, isChecked ->
+            currentSettings = currentSettings.copy(enableNoDoubleBet = isChecked)
+            binding.layoutNoDoubleBetAmount.isEnabled = isChecked
+            binding.spinnerNoDoubleBetAmount.isEnabled = isChecked
+            binding.layoutNoDoubleBetNominal.isEnabled = isChecked
+            binding.spinnerNoDoubleBetNominal.isEnabled = isChecked
+            updateStrategyDescription()
+            Log.d(TAG, "Ставка 'Не выпадет дубль': $isChecked")
+        }
+        
+        // Итоговая сумма ставки "Не выпадет дубль"
+        binding.spinnerNoDoubleBetAmount.setOnItemClickListener { _, _, position, _ ->
+            val noDoubleBetAmounts = listOf(10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000)
+            val selectedAmount = noDoubleBetAmounts[position]
+            currentSettings = currentSettings.copy(noDoubleBetAmount = selectedAmount)
+            updateStrategyDescription()
+            Log.d(TAG, "Итоговая сумма 'Не выпадет дубль': ${formatAmount(selectedAmount)}")
+        }
+        
+        // Номинал кнопки для ставки "Не выпадет дубль"
+        binding.spinnerNoDoubleBetNominal.setOnItemClickListener { _, _, position, _ ->
+            val noDoubleBetNominals = listOf(10, 50, 100, 500, 1000, 2000, 5000, 10000, 20000)
+            val selectedNominal = noDoubleBetNominals[position]
+            currentSettings = currentSettings.copy(noDoubleBetNominal = selectedNominal)
+            updateStrategyDescription()
+            Log.d(TAG, "Номинал кнопки 'Не выпадет дубль': $selectedNominal")
+            Log.d(TAG, "Итоговая сумма ставки 'Не выпадет дубль': ${currentSettings.noDoubleBetAmount}")
         }
         
         // Количество проигрышей до смены цвета
@@ -238,6 +294,15 @@ class SingleModeSettingsActivity : AppCompatActivity() {
         binding.etColorSwitchLosses.isEnabled = currentSettings.enableColorSwitching
         binding.etColorSwitchLosses.setText(currentSettings.maxLossesBeforeColorSwitch.toString())
         
+        // Ставка "Не выпадет дубль"
+        binding.switchNoDoubleBet.isChecked = currentSettings.enableNoDoubleBet
+        binding.layoutNoDoubleBetAmount.isEnabled = currentSettings.enableNoDoubleBet
+        binding.spinnerNoDoubleBetAmount.isEnabled = currentSettings.enableNoDoubleBet
+        binding.spinnerNoDoubleBetAmount.setText(formatAmount(currentSettings.noDoubleBetAmount), false)
+        binding.layoutNoDoubleBetNominal.isEnabled = currentSettings.enableNoDoubleBet
+        binding.spinnerNoDoubleBetNominal.isEnabled = currentSettings.enableNoDoubleBet
+        binding.spinnerNoDoubleBetNominal.setText(currentSettings.noDoubleBetNominal.toString(), false)
+        
         // Производительность
         binding.etDetectionDelay.setText(currentSettings.detectionDelay.toString())
         binding.etClickDelay.setText(currentSettings.clickDelay.toString())
@@ -334,5 +399,16 @@ class SingleModeSettingsActivity : AppCompatActivity() {
             """.trimIndent())
             .setPositiveButton("Понятно", null)
             .show()
+    }
+    
+    /**
+     * Форматирование суммы для отображения
+     */
+    private fun formatAmount(amount: Int): String {
+        return when {
+            amount >= 1000000 -> String.format("%.1fM", amount / 1000000.0).replace(".0M", "M")
+            amount >= 1000 -> String.format("%dK", amount / 1000)
+            else -> amount.toString()
+        }
     }
 }

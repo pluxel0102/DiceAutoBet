@@ -463,7 +463,7 @@ class OpenRouterDiceRecognizer(private val apiKey: String) {
                 // Простой тестовый запрос без изображения
                 val testRequestJson = JSONObject().apply {
                     put("model", model.modelId)
-                    put("max_tokens", 10)
+                    put("max_tokens", 20) // Минимум 16, ставим 20 для надёжности
                     put("messages", JSONArray().apply {
                         put(JSONObject().apply {
                             put("role", "user")

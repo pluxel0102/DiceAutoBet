@@ -177,6 +177,49 @@
 
         </LinearLayout>
 
+        <!-- Статистика: Ничьих | Ничьих подряд -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ничьих:"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/textDraws"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/text_primary"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" | Подряд:"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:layout_marginStart="8dp" />
+
+            <TextView
+                android:id="@+id/textConsecutiveDraws"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/accent"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
         <!-- Индикатор перетаскивания -->
         <View
             android:layout_width="30dp"

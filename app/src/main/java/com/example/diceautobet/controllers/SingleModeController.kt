@@ -444,10 +444,79 @@ class SingleModeController(
             }
 
             onDebugMessage?.invoke("✅ Ставка размещена: ${gameState.currentColor.displayName} ${gameState.currentBet}")
+            
+            // Проверяем, нужна ли ставка "Не выпадет дубль" (после 3 ничьих)
+            if (settings.enableNoDoubleBet && gameState.shouldPlaceNoDoubleBet()) {
+                Log.d(TAG, "⚡ После 3 ничьих подряд → добавляем ставку 'Не выпадет дубль' (${settings.noDoubleBetAmount})")
+                placeNoDoubleBet(settings.noDoubleBetAmount)
+            }
 
         } catch (e: Exception) {
             Log.e(TAG, "Ошибка размещения ставки", e)
             throw e
+        }
+    }
+    
+    /**
+     * Размещение ставки "Не выпадет дубль" с множественным нажатием
+     */
+    private suspend fun placeNoDoubleBet(totalAmount: Int) {
+        try {
+            val nominal = settings.noDoubleBetNominal
+            val clicks = totalAmount / nominal
+            
+            Log.d(TAG, "⚡ placeNoDoubleBet() START: итого=$totalAmount, номинал=$nominal, кликов=$clicks")
+            FileLogger.i(TAG, "⚡ Размещение ставки 'Не выпадет дубль': $totalAmount = ${clicks}x${nominal}")
+            
+            // Проверка паузы
+            if (gameState.isPaused) {
+                Log.d(TAG, "🛑 Ставка 'Не выпадет дубль' отложена - игра на паузе")
+                return
+            }
+            
+            // Проверяем, настроена ли область кнопки "Нет"
+            if (!areas.containsKey(SingleModeAreaType.NO_DOUBLE_BET)) {
+                Log.e(TAG, "❌ Область 'Не выпадет дубль' не настроена!")
+                onDebugMessage?.invoke("⚠️ Область 'Не выпадет дубль' не настроена")
+                return
+            }
+            
+            // Получаем область кнопки нужного номинала
+            val betArea = SingleModeAreaType.getBetAreaByAmount(nominal)
+            if (betArea == null || !areas.containsKey(betArea)) {
+                Log.e(TAG, "❌ Область ставки $nominal не настроена!")
+                onDebugMessage?.invoke("⚠️ Область ставки $nominal не настроена")
+                return
+            }
+            
+            delay(CLICK_DELAY_MS)
+            
+            // 1. Один раз нажимаем кнопку номинала ставки
+            clickArea(betArea)
+            Log.d(TAG, "💰 Нажата кнопка номинала: $nominal")
+            delay(CLICK_DELAY_MS)
+            
+            // 2. Множественное нажатие на область "Не выпадет дубль"
+            repeat(clicks) { clickNumber ->
+                if (gameState.isPaused) {
+                    Log.d(TAG, "🛑 Ставка 'Не выпадет дубль' прервана на клике ${clickNumber + 1}/$clicks")
+                    return
+                }
+                
+                clickArea(SingleModeAreaType.NO_DOUBLE_BET)
+                
+                if ((clickNumber + 1) % 10 == 0) {
+                    Log.d(TAG, "⚡ Нажато на 'Не выпадет дубль': ${clickNumber + 1}/$clicks раз")
+                }
+                delay(CLICK_DELAY_MS)
+            }
+            
+            Log.d(TAG, "✅ Ставка 'Не выпадет дубль' размещена: $totalAmount ($clicks нажатий на область)")
+            onDebugMessage?.invoke("⚡ 'Не выпадет дубль': $totalAmount (номинал $nominal × $clicks нажатий)")
+            
+        } catch (e: Exception) {
+            Log.e(TAG, "❌ Ошибка размещения ставки 'Не выпадет дубль'", e)
+            FileLogger.e(TAG, "❌ Ошибка ставки 'Не выпадет дубль': ${e.message}")
         }
     }
 
@@ -774,12 +843,12 @@ class SingleModeController(
                 }
             }
 
-            // СПЕЦИАЛЬНАЯ ЗАДЕРЖКА ДЛЯ ОДИНОЧНОГО РЕЖИМА - 7 секунд после распознавания Gemini
-            Log.d(TAG, "⏳ Задержка 7 секунд перед следующей ставкой...")
-            onDebugMessage?.invoke("⏳ Ожидание 7 секунд перед следующей ставкой...")
+            // СПЕЦИАЛЬНАЯ ЗАДЕРЖКА ДЛЯ ОДИНОЧНОГО РЕЖИМА - 5 секунд после распознавания Gemini
+            Log.d(TAG, "⏳ Задержка 5 секунд перед следующей ставкой...")
+            onDebugMessage?.invoke("⏳ Ожидание 5 секунд перед следующей ставкой...")
             
             // Разбиваем задержку на мелкие части для проверки паузы
-            var remainingDelay = 7000L
+            var remainingDelay = 5000L
             while (remainingDelay > 0 && !gameState.isPaused) {
                 val stepDelay = minOf(500L, remainingDelay)
                 delay(stepDelay)
@@ -787,7 +856,7 @@ class SingleModeController(
             }
             
             if (gameState.isPaused) {
-                Log.d(TAG, "🛑 Пауза во время 7-секундной задержки")
+                Log.d(TAG, "🛑 Пауза во время 5-секундной задержки")
                 return
             }
             

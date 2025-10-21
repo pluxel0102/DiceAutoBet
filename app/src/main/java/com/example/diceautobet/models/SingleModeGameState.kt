@@ -24,6 +24,7 @@ data class SingleModeGameState(
     // Счетчики проигрышей
     val consecutiveLossesOnColor: Int = 0,      // Проигрыши подряд на текущем цвете
     val totalConsecutiveLosses: Int = 0,        // Общие проигрыши подряд
+    val consecutiveTies: Int = 0,               // Ничьи подряд (для ставки на дубль)
     
     // Статистика
     val totalGames: Int = 0,                    // Общее количество игр
@@ -65,6 +66,13 @@ data class SingleModeGameState(
      */
     fun getOppositeColor(): BetColor {
         return if (currentColor == BetColor.BLUE) BetColor.RED else BetColor.BLUE
+    }
+    
+    /**
+     * Нужно ли делать ставку "Не выпадет дубль" (после 3 ничьих подряд)
+     */
+    fun shouldPlaceNoDoubleBet(): Boolean {
+        return consecutiveTies >= 3
     }
     
     /**
@@ -137,11 +145,12 @@ data class SingleModeGameState(
             isWin -> {
                 Log.d(TAG, "✅ ВЫИГРЫШ! Возврат к базовой ставке: $baseBet")
                 FileLogger.i(TAG, "✅ ВЫИГРЫШ → базовая ставка $baseBet")
-                // Выигрыш - возвращаемся к базовой ставке
+                // Выигрыш - возвращаемся к базовой ставке, сбрасываем счётчик ничьих
                 copy(
                     currentBet = baseBet,
                     consecutiveLossesOnColor = 0,
                     totalConsecutiveLosses = 0,
+                    consecutiveTies = 0,
                     totalGames = totalGames + 1,
                     totalWins = totalWins + 1,
                     totalProfit = totalProfit + currentBet,
@@ -150,8 +159,9 @@ data class SingleModeGameState(
             }
             isDraw -> {
                 val nextBet = getNextBetAfterLoss()
-                Log.d(TAG, "🟰 НИЧЬЯ! Текущая ставка: $currentBet → Следующая ставка: $nextBet")
-                FileLogger.w(TAG, "🟰 НИЧЬЯ: $currentBet → удвоение → $nextBet")
+                val newConsecutiveTies = consecutiveTies + 1
+                Log.d(TAG, "🟰 НИЧЬЯ! Текущая ставка: $currentBet → Следующая ставка: $nextBet (ничьих подряд: $newConsecutiveTies)")
+                FileLogger.w(TAG, "🟰 НИЧЬЯ: $currentBet → удвоение → $nextBet (ничьих подряд: $newConsecutiveTies)")
                 
                 // Ничья считается проигрышем
                 val newLossesOnColor = consecutiveLossesOnColor + 1
@@ -168,6 +178,7 @@ data class SingleModeGameState(
                     currentColor = newColor,
                     consecutiveLossesOnColor = newLossesAfterSwitch,
                     totalConsecutiveLosses = totalConsecutiveLosses + 1,
+                    consecutiveTies = newConsecutiveTies,
                     totalGames = totalGames + 1,
                     totalDraws = totalDraws + 1,
                     totalProfit = totalProfit - currentBet,
@@ -179,7 +190,7 @@ data class SingleModeGameState(
                 Log.d(TAG, "❌ ПРОИГРЫШ! Текущая ставка: $currentBet → Следующая ставка: $nextBet")
                 FileLogger.w(TAG, "❌ ПРОИГРЫШ: $currentBet → удвоение → $nextBet")
                 
-                // Проигрыш
+                // Проигрыш - сбрасываем счётчик ничьих
                 val newLossesOnColor = consecutiveLossesOnColor + 1
                 val newColor = if (shouldSwitchColor()) getOppositeColor() else currentColor
                 val newLossesAfterSwitch = if (shouldSwitchColor()) 0 else newLossesOnColor
@@ -194,6 +205,7 @@ data class SingleModeGameState(
                     currentColor = newColor,
                     consecutiveLossesOnColor = newLossesAfterSwitch,
                     totalConsecutiveLosses = totalConsecutiveLosses + 1,
+                    consecutiveTies = 0,
                     totalGames = totalGames + 1,
                     totalLosses = totalLosses + 1,
                     totalProfit = totalProfit - currentBet,

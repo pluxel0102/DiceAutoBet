@@ -746,7 +746,14 @@ class OverlayService : Service() {
                     callback(true)
                 },
                 preferencesManager = prefsManager
-            )
+            ).apply {
+                // Настраиваем callback для обновления UI при изменении состояния
+                onGameStateChanged = { controllerState ->
+                    uiHandler.post {
+                        updateUI()
+                    }
+                }
+            }
             
             // ИСПРАВЛЕНИЕ: Вызываем initialize() для загрузки областей
             singleModeController?.initialize()
@@ -2280,21 +2287,38 @@ class OverlayService : Service() {
             try {
                 Log.d("OverlayService", "Обновляем UI одиночного режима: isRunning=${gameState.isRunning}, isPaused=${gameState.isPaused}")
 
+                // Получаем состояние из контроллера
+                val controllerState = singleModeController?.getGameState()
+
                 textStatus.text = when {
                     gameState.isPaused  -> "Пауза"
                     gameState.isRunning -> "Играем"
                     else                -> "Остановлено"
                 }
 
-                textCurrentBet.text = "${gameState.currentBet} ₽"
-                textCurrentColor.text = when (gameState.betChoice) {
-                    BetChoice.RED -> "Красное"
-                    BetChoice.ORANGE -> "Черное" // Используем ORANGE для черного в одиночном режиме
-                    else -> "Не выбрано"
+                textCurrentBet.text = "${controllerState?.currentBet ?: gameState.currentBet} ₽"
+                textCurrentColor.text = when (controllerState?.currentColor) {
+                    BetColor.BLUE -> "Синий"
+                    BetColor.RED -> "Красный"
+                    else -> when (gameState.betChoice) {
+                        BetChoice.RED -> "Красное"
+                        BetChoice.ORANGE -> "Черное"
+                        else -> "Не выбрано"
+                    }
                 }
 
-                textWins.text = "$totalWins"
-                textLosses.text = "$totalLosses"
+                // Используем данные из контроллера, если доступны
+                if (controllerState != null) {
+                    textWins.text = "${controllerState.totalWins}"
+                    textLosses.text = "${controllerState.totalLosses}"
+                    textDraws.text = "${controllerState.totalDraws}"
+                    textConsecutiveDraws.text = "${controllerState.consecutiveTies}"
+                } else {
+                    textWins.text = "$totalWins"
+                    textLosses.text = "$totalLosses"
+                    textDraws.text = "0"
+                    textConsecutiveDraws.text = "0"
+                }
 
                 Log.d("OverlayService", "UI одиночного режима обновлен успешно")
             } catch (e: Exception) {

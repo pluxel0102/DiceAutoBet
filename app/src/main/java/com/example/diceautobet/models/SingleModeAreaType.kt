@@ -23,7 +23,10 @@ enum class SingleModeAreaType(val displayName: String, val description: String) 
     BET_20000("Ставка 20000", "Кнопка ставки 20,000"),
     
     // Кнопка удвоения
-    DOUBLE_BUTTON("Кнопка удвоить (Х2)", "Кнопка для удвоения текущей ставки");
+    DOUBLE_BUTTON("Кнопка удвоить (Х2)", "Кнопка для удвоения текущей ставки"),
+    
+    // Ставка на дубль
+    NO_DOUBLE_BET("Не выпадет дубль", "Кнопка 'Нет' в ставке на дубль");
     
     companion object {
         /**
