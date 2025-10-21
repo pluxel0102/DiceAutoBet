@@ -52,6 +52,9 @@ object UpdateDialog {
             .setCancelable(!updateInfo.mandatory)
             .create()
         
+        // Устанавливаем прозрачный фон для диалога (чтобы видеть скругленные углы)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        
         // Настраиваем кнопки
         binding.btnUpdate.setOnClickListener {
             dialog.dismiss()

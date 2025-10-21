@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="@android:color/white">
+    android:background="@drawable/dialog_dark_background">
 
     <!-- Заголовок с иконкой -->
     <LinearLayout
@@ -37,7 +37,7 @@
                 android:text="Обновление доступно"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@android:color/black" />
+                android:textColor="#FFFFFF" />
 
             <TextView
                 android:id="@+id/tvVersions"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:text="1.0.0 → 1.0.1"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="#B0B0B0"
                 android:layout_marginTop="4dp" />
         </LinearLayout>
     </LinearLayout>
@@ -54,7 +54,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#E0E0E0"
+        android:background="#404040"
         android:layout_marginBottom="16dp" />
 
     <!-- Список изменений -->
@@ -64,7 +64,7 @@
         android:text="Что нового:"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
+        android:textColor="#FFFFFF"
         android:layout_marginBottom="8dp" />
 
     <ScrollView
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:text="• Улучшена производительность\n• Исправлены ошибки\n• Новые возможности"
             android:textSize="14sp"
-            android:textColor="@android:color/black"
+            android:textColor="#E0E0E0"
             android:lineSpacingExtra="4dp" />
     </ScrollView>
 
@@ -90,10 +90,11 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:visibility="gone"
-        app:cardBackgroundColor="#FFF3E0"
+        app:cardBackgroundColor="#3D2F00"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp"
-        app:strokeWidth="0dp">
+        app:strokeWidth="1dp"
+        app:strokeColor="#FFA726">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -116,7 +117,7 @@
                 android:text="Это обязательное обновление"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="#F57C00" />
+                android:textColor="#FFB74D" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
