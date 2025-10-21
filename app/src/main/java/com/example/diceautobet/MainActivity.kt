@@ -1507,6 +1507,10 @@ class MainActivity : AppCompatActivity() {
         // Обновляем статус
         updateOpenRouterDialogStatus(tvApiKeyStatus, tvStatistics, currentOpenRouterKey, currentModel)
         
+        // Проверяем и включаем кнопку тестирования, если ключ уже есть
+        btnTestOpenRouter.isEnabled = currentOpenRouterKey.startsWith("sk-or-") && currentOpenRouterKey.length > 20
+        Log.d("MainActivity", "🔑 Инициализация: API ключ ${if (btnTestOpenRouter.isEnabled) "валиден" else "отсутствует/невалиден"}")
+        
         // Обработчик изменения OpenRouter API ключа
         etOpenRouterApiKey.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -1515,6 +1519,7 @@ class MainActivity : AppCompatActivity() {
                 val apiKey = s?.toString() ?: ""
                 updateOpenRouterDialogStatus(tvApiKeyStatus, tvStatistics, apiKey, currentModel)
                 btnTestOpenRouter.isEnabled = apiKey.startsWith("sk-or-") && apiKey.length > 20
+                Log.d("MainActivity", "🔑 API ключ изменён, кнопка тестирования: ${if (btnTestOpenRouter.isEnabled) "включена" else "выключена"}")
             }
         })
         
@@ -1526,8 +1531,13 @@ class MainActivity : AppCompatActivity() {
         
         // Обработчик кнопки тестирования
         btnTestOpenRouter.setOnClickListener {
+            Log.d("MainActivity", "🧪 Кнопка 'Тест API' нажата")
+            
             val apiKey = etOpenRouterApiKey.text?.toString() ?: ""
+            Log.d("MainActivity", "🔑 API ключ: ${apiKey.take(10)}... (длина: ${apiKey.length})")
+            
             if (!apiKey.startsWith("sk-or-") || apiKey.length < 20) {
+                Log.w("MainActivity", "❌ Некорректный API ключ")
                 android.widget.Toast.makeText(this, "❌ Некорректный API ключ OpenRouter", android.widget.Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -1535,26 +1545,41 @@ class MainActivity : AppCompatActivity() {
             // Отключаем кнопку во время теста
             btnTestOpenRouter.isEnabled = false
             btnTestOpenRouter.text = "Тестирование..."
+            Log.d("MainActivity", "⏳ Начинаем тест API...")
             
             // Получаем выбранную модель
-            val selectedModel = when (spinnerOpenRouterModel.text.toString()) {
+            val selectedModelText = spinnerOpenRouterModel.text.toString()
+            Log.d("MainActivity", "🤖 Выбрана модель: $selectedModelText")
+            
+            val selectedModel = when (selectedModelText) {
                 models[0] -> com.example.diceautobet.recognition.OpenRouterDiceRecognizer.Model.CLAUDE_45
                 models[1] -> com.example.diceautobet.recognition.OpenRouterDiceRecognizer.Model.CHATGPT_5
                 else -> com.example.diceautobet.recognition.OpenRouterDiceRecognizer.Model.GEMINI_25_FLASH_LITE
             }
             
             // Запускаем тест в корутине
-            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-                val recognizer = com.example.diceautobet.recognition.OpenRouterDiceRecognizer(apiKey)
-                val (success, message) = recognizer.testApiConnection(selectedModel)
-                
-                // Восстанавливаем кнопку
-                btnTestOpenRouter.isEnabled = true
-                btnTestOpenRouter.text = "Тест API"
-                
-                // Показываем результат
-                android.widget.Toast.makeText(this@MainActivity, message, android.widget.Toast.LENGTH_LONG).show()
-                Log.d("MainActivity", "🧪 Результат теста API: success=$success, message=$message")
+            lifecycleScope.launchWhenStarted {
+                try {
+                    Log.d("MainActivity", "🚀 Создаём OpenRouterDiceRecognizer...")
+                    val recognizer = com.example.diceautobet.recognition.OpenRouterDiceRecognizer(apiKey)
+                    
+                    Log.d("MainActivity", "📡 Отправляем тестовый запрос...")
+                    val (success, message) = recognizer.testApiConnection(selectedModel)
+                    
+                    Log.d("MainActivity", "🧪 Результат теста API: success=$success, message=$message")
+                    
+                    // Восстанавливаем кнопку
+                    btnTestOpenRouter.isEnabled = true
+                    btnTestOpenRouter.text = "Тест API"
+                    
+                    // Показываем результат
+                    android.widget.Toast.makeText(this@MainActivity, message, android.widget.Toast.LENGTH_LONG).show()
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "❌ Ошибка при тестировании API: ${e.message}", e)
+                    btnTestOpenRouter.isEnabled = true
+                    btnTestOpenRouter.text = "Тест API"
+                    android.widget.Toast.makeText(this@MainActivity, "❌ Ошибка: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
+                }
             }
         }
         
