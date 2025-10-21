@@ -164,6 +164,9 @@ class MainActivity : AppCompatActivity() {
         updatePermissionButtons()
         loadSettings()
         
+        // Показываем текущую версию
+        updateVersionDisplay()
+        
         // � ЗАПРОС РАЗРЕШЕНИЯ НА ХРАНИЛИЩЕ (для обновлений)
         checkStoragePermission()
         
@@ -351,6 +354,19 @@ class MainActivity : AppCompatActivity() {
                 updateManager.skipVersion(updateInfo)
             }
         )
+    }
+
+    /**
+     * Обновляет отображение текущей версии
+     */
+    private fun updateVersionDisplay() {
+        try {
+            val currentVersion = updateManager.getCurrentVersionName()
+            binding.tvCurrentVersion?.text = "Текущая версия: $currentVersion"
+            Log.d("MainActivity", "Отображение версии обновлено: $currentVersion")
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Ошибка обновления отображения версии", e)
+        }
     }
 
     /**

@@ -17,6 +17,7 @@ import com.example.diceautobet.utils.PreferencesManager
 import com.example.diceautobet.utils.FileLogger
 import kotlinx.coroutines.*
 import java.io.File
+import java.io.FileOutputStream
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
@@ -150,6 +151,11 @@ class SingleModeController(
 
             isActive = true
             consecutiveFailedDetections = 0 // Сбрасываем счетчик неудачных попыток
+            
+            // 🔄 Сбрасываем StaticFrameDetector при запуске игры
+            com.example.diceautobet.recognition.StaticFrameDetector.reset()
+            Log.d(TAG, "🔄 StaticFrameDetector сброшен при запуске игры")
+            
             gameState = gameState.copy(
                 isGameActive = true,
                 gameStartTime = System.currentTimeMillis()
@@ -598,6 +604,12 @@ class SingleModeController(
                             val result = analyzeGameResult(diceAreaBitmap)
                             if (result != null) {
                                 Log.d(TAG, "Результат определен: ${result}")
+                                
+                                // 🔄 ВАЖНО: Сбрасываем StaticFrameDetector после распознавания
+                                // Иначе следующий одинаковый результат будет заблокирован как "застрявший"
+                                com.example.diceautobet.recognition.StaticFrameDetector.reset()
+                                Log.d(TAG, "🔄 StaticFrameDetector сброшен для следующего раунда")
+                                
                                 return result
                             } else {
                                 // Если не удалось распознать - сбрасываем и ждем дальше
@@ -820,6 +832,10 @@ class SingleModeController(
      */
     private fun isTimerImage(bitmap: Bitmap): Boolean {
         try {
+            // Сохраняем изображение для отладки
+            val timestamp = SimpleDateFormat("HHmmss_SSS", Locale.getDefault()).format(Date())
+            saveDebugImage(bitmap, "timer_check_${timestamp}.png", "Проверка таймера/кубиков")
+            
             // Проверяем наличие зеленых или красных пикселей в центральной области
             val centerX = bitmap.width / 2
             val centerY = bitmap.height / 2
@@ -848,7 +864,8 @@ class SingleModeController(
                         val isRedPixel = red > green + 40 && red > blue + 40 && red > 100
                         
                         // Проверяем, является ли пиксель синим (КУБИК!)
-                        val isBluePixel = blue > red + 40 && blue > green + 40 && blue > 100
+                        // МАКСИМАЛЬНО ПОНИЖЕН ПОРОГ для обнаружения синих кубиков
+                        val isBluePixel = blue > red + 10 && blue > green + 10 && blue > 50
 
                         if (isGreenTimer) greenPixelCount++
                         if (isRedPixel) redPixelCount++
@@ -870,26 +887,32 @@ class SingleModeController(
                 (bluePixelCount.toFloat() / totalPixelsChecked) * 100
             } else 0f
 
-            // КЛЮЧЕВАЯ ЛОГИКА: 
-            // Если есть синие пиксели (>2%) - это КУБИКИ, не таймер!
-            // Таймер = зелёные/красные цифры БЕЗ синих кубиков
-            val hasBlueDice = bluePercentage > 2.0f
-            val hasGreenTimer = greenPercentage > 3.0f
-            val hasRedTimer = redPercentage > 3.0f
+            // НОВАЯ УЛУЧШЕННАЯ ЛОГИКА:
+            // Таймер = ТОЛЬКО зелёный (>5%) без красного и синего
+            // ИЛИ ТОЛЬКО красный (>5%) в последние 5 секунд без синего
+            // Кубики = есть И красный И синий одновременно (даже если мало)
+            val hasGreenTimer = greenPercentage > 5.0f
+            val hasRedPixels = redPercentage > 2.0f
+            val hasBluePixels = bluePercentage > 0.5f  // Даже 0.5% синего - это кубики!
             
-            val isTimer = (hasGreenTimer || hasRedTimer) && !hasBlueDice
+            // Если есть ОДНОВРЕМЕННО красный и синий - это точно КУБИКИ
+            val hasDice = hasRedPixels && hasBluePixels
+            
+            // Таймер только если есть зелёный/красный БЕЗ кубиков
+            val isTimer = (hasGreenTimer || (hasRedPixels && !hasBluePixels)) && !hasDice
 
-            if (hasGreenTimer || hasRedTimer || hasBlueDice) {
-                Log.d(TAG, "🎨 Анализ цветов: " +
-                    "Зелёный=${greenPercentage.toInt()}%, " +
-                    "Красный=${redPercentage.toInt()}%, " +
-                    "Синий=${bluePercentage.toInt()}%")
-                
-                if (isTimer) {
-                    Log.d(TAG, "🟢🔴 Обнаружен ТАЙМЕР (зелёные/красные цифры)")
-                } else if (hasBlueDice) {
-                    Log.d(TAG, "🎲 Обнаружены КУБИКИ (синий цвет присутствует)")
-                }
+            // ВСЕГДА выводим анализ цветов для отладки
+            Log.d(TAG, "🎨 Анализ цветов: " +
+                "Зелёный=${greenPercentage.toInt()}%, " +
+                "Красный=${redPercentage.toInt()}%, " +
+                "Синий=${bluePercentage.toInt()}%")
+            
+            if (hasDice) {
+                Log.d(TAG, "🎲 Обнаружены КУБИКИ (красный ${redPercentage.toInt()}% + синий ${bluePercentage.toInt()}%)")
+            } else if (isTimer) {
+                Log.d(TAG, "⏱️ Обнаружен ТАЙМЕР (зелёные/красные цифры без синего)")
+            } else {
+                Log.d(TAG, "❓ Неопределенная область (недостаточно цветов)")
             }
 
             return isTimer
@@ -1063,6 +1086,33 @@ class SingleModeController(
      * Проверить, активна ли игра
      */
     fun isGameActive(): Boolean = isActive
+
+    /**
+     * Сохранение отладочного изображения
+     */
+    private fun saveDebugImage(bitmap: Bitmap, filename: String, description: String = "") {
+        try {
+            if (!settings.saveDebugScreenshots) {
+                return
+            }
+
+            val debugDir = File(context.getExternalFilesDir(null), "debug_images")
+            if (!debugDir.exists()) {
+                debugDir.mkdirs()
+            }
+
+            val file = File(debugDir, filename)
+            FileOutputStream(file).use { out ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+            }
+
+            if (description.isNotEmpty()) {
+                Log.d(TAG, "💾 Сохранено: $filename - $description")
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Ошибка сохранения отладочного изображения: ${e.message}")
+        }
+    }
 
     /**
      * Освобождение ресурсов

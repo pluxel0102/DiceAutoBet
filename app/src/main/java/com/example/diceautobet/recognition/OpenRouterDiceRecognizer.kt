@@ -285,8 +285,18 @@ class OpenRouterDiceRecognizer(private val apiKey: String) {
         return try {
             Log.d(TAG, "🌍 Отправляем запрос к OpenRouter напрямую (без прокси)...")
             
-            // Создаем клиент БЕЗ прокси
+            // КРИТИЧНО: Очищаем системные настройки SOCKS прокси
+            System.clearProperty("socksProxyHost")
+            System.clearProperty("socksProxyPort")
+            System.clearProperty("java.net.socks.username")
+            System.clearProperty("java.net.socks.password")
+            java.net.Authenticator.setDefault(null)
+            
+            Log.d(TAG, "🧹 Системные настройки прокси очищены")
+            
+            // Создаем клиент БЕЗ прокси, явно указываем NO_PROXY
             val directClient = OkHttpClient.Builder()
+                .proxy(java.net.Proxy.NO_PROXY)  // Явно отключаем прокси
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
