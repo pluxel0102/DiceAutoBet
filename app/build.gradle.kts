@@ -25,10 +25,17 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("diceautobet-release.keystore")
-            storePassword = "android123"
-            keyAlias = "diceautobet"
-            keyPassword = "android123"
+            // Чтение настроек из keystore.properties (не загружается в Git)
+            val keystorePropertiesFile = rootProject.file("keystore.properties")
+            if (keystorePropertiesFile.exists()) {
+                val keystoreProperties = java.util.Properties()
+                keystoreProperties.load(keystorePropertiesFile.inputStream())
+                
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+            }
         }
     }
 
