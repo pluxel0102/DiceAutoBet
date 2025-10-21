@@ -129,7 +129,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSkip"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Пропустить"
@@ -138,13 +138,15 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUpdate"
-            style="@style/Widget.Material3.Button.Elevated"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Обновить"
             android:textSize="14sp"
             app:icon="@android:drawable/stat_sys_download"
             app:iconGravity="start"
-            android:backgroundTint="#4CAF50" />
+            android:backgroundTint="#4CAF50"
+            app:cornerRadius="8dp"
+            android:elevation="4dp" />
     </LinearLayout>
 </LinearLayout>
