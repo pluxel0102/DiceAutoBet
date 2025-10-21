@@ -147,7 +147,7 @@
             app:icon="@android:drawable/stat_sys_download"
             app:iconGravity="start"
             android:backgroundTint="#4CAF50"
-            app:cornerRadius="8dp"
+            app:cornerRadius="20dp"
             android:elevation="4dp" />
     </LinearLayout>
 </LinearLayout>

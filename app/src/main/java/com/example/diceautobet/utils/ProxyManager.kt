@@ -20,17 +20,11 @@ import kotlinx.coroutines.launch
 object ProxyManager {
     private const val TAG = "ProxyManager"
     
-    // Настройки прокси-сервера по умолчанию
-    private const val DEFAULT_PROXY_HOST = "200.10.39.135"
-    private const val DEFAULT_PROXY_PORT = 8000
-    private const val DEFAULT_PROXY_USERNAME = "tr6NAW"
-    private const val DEFAULT_PROXY_PASSWORD = "Kjohrt"
-    
-    // 🔄 РЕЗЕРВНЫЕ НАСТРОЙКИ HTTP ПРОКСИ (если SOCKS5 не работает)
-    private const val HTTP_FALLBACK_HOST = "138.219.172.121"
-    private const val HTTP_FALLBACK_PORT = 8000
-    private const val HTTP_FALLBACK_USER = "ZpUR2q"
-    private const val HTTP_FALLBACK_PASS = "Hd1foV"
+    // Настройки прокси-сервера по умолчанию (пустые)
+    private const val DEFAULT_PROXY_HOST = ""
+    private const val DEFAULT_PROXY_PORT = 1080
+    private const val DEFAULT_PROXY_USERNAME = ""
+    private const val DEFAULT_PROXY_PASSWORD = ""
     
     // Текущие настройки прокси (загружаются из SharedPreferences)
     private var _currentProxyHost = DEFAULT_PROXY_HOST
