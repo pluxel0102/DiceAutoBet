@@ -33,7 +33,7 @@ class UpdateManager(private val context: Context) {
     companion object {
         private const val TAG = "UpdateManager"
         // URL для приватного репозитория GitHub
-        private const val UPDATE_JSON_URL = "https://raw.githubusercontent.com/pluxel0102/DiceAutoBet/main/update.json"
+        private const val UPDATE_JSON_URL = "https://api.github.com/repos/pluxel0102/DiceAutoBet/contents/update.json"
         // GitHub Personal Access Token для доступа к приватному репозиторию
         private const val GITHUB_TOKEN = "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"
         private const val PREFS_NAME = "update_prefs"
@@ -55,8 +55,9 @@ class UpdateManager(private val context: Context) {
             Log.d(TAG, "🔍 Проверяем обновления...")
             FileLogger.i(TAG, "🔍 Проверка обновлений: $UPDATE_JSON_URL")
             
-            // Добавляем timestamp для обхода кэша GitHub
-            val urlWithTimestamp = "$UPDATE_JSON_URL?t=${System.currentTimeMillis()}"
+            // Добавляем timestamp и случайный параметр для обхода кэша GitHub
+            val random = (0..999999).random()
+            val urlWithTimestamp = "$UPDATE_JSON_URL?t=${System.currentTimeMillis()}&r=$random"
             val url = URL(urlWithTimestamp)
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
@@ -68,7 +69,14 @@ class UpdateManager(private val context: Context) {
 
             if (connection.responseCode == 200) {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
-                val json = JSONObject(response)
+                val apiJson = JSONObject(response)
+                
+                // Декодируем base64 содержимое из GitHub API
+                val base64Content = apiJson.getString("content").replace("\n", "").replace("\r", "")
+                val decodedBytes = android.util.Base64.decode(base64Content, android.util.Base64.DEFAULT)
+                val jsonContent = String(decodedBytes, Charsets.UTF_8)
+                
+                val json = JSONObject(jsonContent)
 
                 val updateInfo = UpdateInfo(
                     latestVersion = json.getString("latestVersion"),
