@@ -26,6 +26,9 @@ data class SingleModeGameState(
     val totalConsecutiveLosses: Int = 0,        // Общие проигрыши подряд
     val consecutiveTies: Int = 0,               // Ничьи подряд (для ставки на дубль)
     
+    // Флаг ставки "Не дубль"
+    val wasNoDoubleBetPlaced: Boolean = false,  // Была ли размещена ставка "Не дубль" в этом раунде
+    
     // Статистика
     val totalGames: Int = 0,                    // Общее количество игр
     val totalWins: Int = 0,                     // Общее количество выигрышей

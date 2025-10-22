@@ -810,6 +810,9 @@ class OverlayService : Service() {
         }
 
         try {
+            // КРИТИЧНО: Запускаем foreground service ДО создания MediaProjection (Android 14+)
+            startForegroundSafely()
+            
             Log.d("OverlayService", "Создаем MediaProjection: resultCode=$resultCode")
             Log.d("OverlayService", "ResultData: $resultData")
             showToast("Создаем MediaProjection...")

@@ -15,10 +15,8 @@ data class SingleModeSettings(
     val maxLossesBeforeColorSwitch: Int = 2,    // Количество проигрышей до смены цвета
     val enableColorSwitching: Boolean = true,   // Включить автоматическую смену цвета
     
-    // Настройки ставки на дубль (после 3 ничьих)
-    val noDoubleBetAmount: Int = 100000,        // Итоговая сумма ставки "Не выпадет дубль"
-    val noDoubleBetNominal: Int = 10000,        // Номинал кнопки для множественного нажатия
-    val enableNoDoubleBet: Boolean = true,      // Включить ставку "Не выпадет дубль" после 3 ничьих
+    // Настройки ставки на дубль (после 3 ничьих) - УПРОЩЕНО
+    val enableNoDoubleBet: Boolean = true,      // Включить ставку "Не выпадет дубль" после 3 ничьих (всегда 200,000)
     
     // Настройки безопасности
     val enableMaxBetLimit: Boolean = true,      // Включить ограничение максимальной ставки
@@ -104,13 +102,7 @@ data class SingleModeSettings(
         }
         
         val doubleBetInfo = if (enableNoDoubleBet) {
-            val clicks = noDoubleBetAmount / noDoubleBetNominal
-            val formattedAmount = when {
-                noDoubleBetAmount >= 1000000 -> String.format("%.1fM", noDoubleBetAmount / 1000000.0).replace(".0M", "M")
-                noDoubleBetAmount >= 1000 -> String.format("%dK", noDoubleBetAmount / 1000)
-                else -> noDoubleBetAmount.toString()
-            }
-            " + ставка 'Не выпадет дубль' ($formattedAmount = ${clicks}x${noDoubleBetNominal}) после 3 ничьих"
+            " + ставка 'Не выпадет дубль' (4→ + ставка + 4← + цвет) после 3 ничьих"
         } else {
             ""
         }

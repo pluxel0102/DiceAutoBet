@@ -250,53 +250,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="После 3 ничьих подряд делать дополнительную ставку 'Не выпадет дубль'"
+                        android:text="После 3 ничьих подряд делать ставку 'Не выпадет дубль' на сумму 200,000"
                         android:textSize="12sp"
                         android:textColor="@color/text_secondary"
-                        android:layout_marginBottom="16dp" />
-
-                    <!-- Итоговая сумма ставки на дубль -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layoutNoDoubleBetAmount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerNoDoubleBetAmount"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Итоговая сумма ставки"
-                            android:inputType="none"
-                            android:textSize="16sp" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Номинал кнопки для ставки -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layoutNoDoubleBetNominal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spinnerNoDoubleBetNominal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Номинал кнопки"
-                            android:inputType="none"
-                            android:textSize="16sp" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
+                        android:layout_marginBottom="8dp" />
+                    
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Будет нажимать кнопку выбранного номинала нужное количество раз"
-                        android:textSize="12sp"
-                        android:textColor="@color/text_secondary"
+                        android:text="ℹ️ Настройте области: '4 нажатия' (для прокрутки) и 'Не выпадет дубль'"
+                        android:textSize="11sp"
+                        android:textColor="@color/accent"
                         android:layout_marginBottom="8dp" />
 
                 </LinearLayout>

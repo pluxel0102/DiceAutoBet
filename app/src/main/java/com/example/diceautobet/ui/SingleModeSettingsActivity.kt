@@ -77,31 +77,8 @@ class SingleModeSettingsActivity : AppCompatActivity() {
             setText(currentSettings.baseBet.toString(), false)
         }
         
-        // Настройка спиннера итоговой суммы ставки "Не выпадет дубль"
-        val noDoubleBetAmounts = listOf(10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000)
-        val noDoubleBetAdapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_dropdown_item_1line,
-            noDoubleBetAmounts.map { formatAmount(it) }
-        )
-        
-        (binding.spinnerNoDoubleBetAmount as? AutoCompleteTextView)?.apply {
-            setAdapter(noDoubleBetAdapter)
-            setText(formatAmount(currentSettings.noDoubleBetAmount), false)
-        }
-        
-        // Настройка спиннера номинала кнопки для ставки "Не выпадет дубль"
-        val noDoubleBetNominals = listOf(10, 50, 100, 500, 1000, 2000, 5000, 10000, 20000)
-        val noDoubleBetNominalAdapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_dropdown_item_1line,
-            noDoubleBetNominals.map { it.toString() }
-        )
-        
-        (binding.spinnerNoDoubleBetNominal as? AutoCompleteTextView)?.apply {
-            setAdapter(noDoubleBetNominalAdapter)
-            setText(currentSettings.noDoubleBetNominal.toString(), false)
-        }
+        // УДАЛЕНО: Настройки спиннеров для ставки "Не выпадет дубль"
+        // Теперь всегда ставит 200,000 через 4 нажатия на область прокрутки
     }
     
     /**
@@ -144,32 +121,12 @@ class SingleModeSettingsActivity : AppCompatActivity() {
         // Переключатель ставки "Не выпадет дубль"
         binding.switchNoDoubleBet.setOnCheckedChangeListener { _, isChecked ->
             currentSettings = currentSettings.copy(enableNoDoubleBet = isChecked)
-            binding.layoutNoDoubleBetAmount.isEnabled = isChecked
-            binding.spinnerNoDoubleBetAmount.isEnabled = isChecked
-            binding.layoutNoDoubleBetNominal.isEnabled = isChecked
-            binding.spinnerNoDoubleBetNominal.isEnabled = isChecked
             updateStrategyDescription()
-            Log.d(TAG, "Ставка 'Не выпадет дубль': $isChecked")
+            Log.d(TAG, "Ставка 'Не выпадет дубль' (200,000): $isChecked")
         }
         
-        // Итоговая сумма ставки "Не выпадет дубль"
-        binding.spinnerNoDoubleBetAmount.setOnItemClickListener { _, _, position, _ ->
-            val noDoubleBetAmounts = listOf(10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000)
-            val selectedAmount = noDoubleBetAmounts[position]
-            currentSettings = currentSettings.copy(noDoubleBetAmount = selectedAmount)
-            updateStrategyDescription()
-            Log.d(TAG, "Итоговая сумма 'Не выпадет дубль': ${formatAmount(selectedAmount)}")
-        }
-        
-        // Номинал кнопки для ставки "Не выпадет дубль"
-        binding.spinnerNoDoubleBetNominal.setOnItemClickListener { _, _, position, _ ->
-            val noDoubleBetNominals = listOf(10, 50, 100, 500, 1000, 2000, 5000, 10000, 20000)
-            val selectedNominal = noDoubleBetNominals[position]
-            currentSettings = currentSettings.copy(noDoubleBetNominal = selectedNominal)
-            updateStrategyDescription()
-            Log.d(TAG, "Номинал кнопки 'Не выпадет дубль': $selectedNominal")
-            Log.d(TAG, "Итоговая сумма ставки 'Не выпадет дубль': ${currentSettings.noDoubleBetAmount}")
-        }
+        // УДАЛЕНО: Обработчики для спиннеров настройки ставки
+        // Теперь всегда ставит 200,000 через 4 нажатия на область прокрутки
         
         // Количество проигрышей до смены цвета
         binding.etColorSwitchLosses.addTextChangedListener(object : TextWatcher {
@@ -294,14 +251,8 @@ class SingleModeSettingsActivity : AppCompatActivity() {
         binding.etColorSwitchLosses.isEnabled = currentSettings.enableColorSwitching
         binding.etColorSwitchLosses.setText(currentSettings.maxLossesBeforeColorSwitch.toString())
         
-        // Ставка "Не выпадет дубль"
+        // Ставка "Не выпадет дубль" (всегда 200,000)
         binding.switchNoDoubleBet.isChecked = currentSettings.enableNoDoubleBet
-        binding.layoutNoDoubleBetAmount.isEnabled = currentSettings.enableNoDoubleBet
-        binding.spinnerNoDoubleBetAmount.isEnabled = currentSettings.enableNoDoubleBet
-        binding.spinnerNoDoubleBetAmount.setText(formatAmount(currentSettings.noDoubleBetAmount), false)
-        binding.layoutNoDoubleBetNominal.isEnabled = currentSettings.enableNoDoubleBet
-        binding.spinnerNoDoubleBetNominal.isEnabled = currentSettings.enableNoDoubleBet
-        binding.spinnerNoDoubleBetNominal.setText(currentSettings.noDoubleBetNominal.toString(), false)
         
         // Производительность
         binding.etDetectionDelay.setText(currentSettings.detectionDelay.toString())

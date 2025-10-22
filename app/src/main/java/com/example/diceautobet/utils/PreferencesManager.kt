@@ -1271,9 +1271,7 @@ class PreferencesManager(private val context: Context) {
             putInt("single_max_losses_before_color_switch", settings.maxLossesBeforeColorSwitch)
             putBoolean("single_enable_color_switching", settings.enableColorSwitching)
             
-            // Настройки ставки на дубль
-            putInt("single_no_double_bet_amount", settings.noDoubleBetAmount)
-            putInt("single_no_double_bet_nominal", settings.noDoubleBetNominal)
+            // Настройки ставки на дубль (упрощено - всегда 200,000)
             putBoolean("single_enable_no_double_bet", settings.enableNoDoubleBet)
             
             // Настройки безопасности
@@ -1320,9 +1318,7 @@ class PreferencesManager(private val context: Context) {
                 maxLossesBeforeColorSwitch = prefs.getInt("single_max_losses_before_color_switch", 2),
                 enableColorSwitching = prefs.getBoolean("single_enable_color_switching", true),
                 
-                // Настройки ставки на дубль
-                noDoubleBetAmount = prefs.getInt("single_no_double_bet_amount", 100000),
-                noDoubleBetNominal = prefs.getInt("single_no_double_bet_nominal", 10000),
+                // Настройки ставки на дубль (упрощено - всегда 200,000)
                 enableNoDoubleBet = prefs.getBoolean("single_enable_no_double_bet", true),
                 
                 // Настройки безопасности
